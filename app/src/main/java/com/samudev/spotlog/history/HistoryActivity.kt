@@ -21,15 +21,13 @@ import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.history.HistoryAdapter.HistoryItemListener
 
 
-class HistoryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
-        HistoryItemListener {
+class HistoryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     companion object {
         private val LOG_TAG: String = HistoryActivity::class.java.simpleName
     }
 
     private lateinit var historyPresenter: HistoryPresenter
-    private lateinit var spotifyReceiver: SpotifyReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,19 +50,6 @@ class HistoryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
 
         historyPresenter = HistoryPresenter(historyListFragment)
-        spotifyReceiver = SpotifyReceiver()
-
-        registerBroadcastReceiver()
-    }
-
-    override fun onSongClick(song: Song?) {
-        Log.v(LOG_TAG, "song $song clicked!")
-        Toast.makeText(this, "Clicked!", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun registerBroadcastReceiver() {
-        val spotifyIntent = IntentFilter("com.spotify.music.playbackstatechanged")
-        this.registerReceiver(spotifyReceiver, spotifyIntent)
     }
 
     private fun logSong(song: Song) {
@@ -72,36 +57,6 @@ class HistoryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 as HistoryFragment).also { it.logSong(song) }
     }
 
-    inner class SpotifyReceiver : BroadcastReceiver() {
-        val PLAYBACKSTATE_CHANGED = "com.spotify.music.playbackstatechanged"
-
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent == null || context !is HistoryActivity) return
-            if (intent.action.equals(PLAYBACKSTATE_CHANGED)) {
-                Log.v("Context from intent: ", " $context")
-                val song = Song(
-                        intent.getStringExtra("id"),
-                        intent.getStringExtra("artist"),
-                        intent.getStringExtra("album"),
-                        intent.getStringExtra("track"),
-                        intent.getIntExtra("length", 0)
-                )
-                logSong(song)
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        registerBroadcastReceiver()
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-        this.unregisterReceiver(spotifyReceiver)
-    }
 
     override fun onBackPressed() {
         val drawerLayout = findViewById<DrawerLayout>(drawer_layout)

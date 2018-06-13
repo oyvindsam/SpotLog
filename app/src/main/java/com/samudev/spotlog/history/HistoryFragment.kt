@@ -1,5 +1,9 @@
 package com.samudev.spotlog.history
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -25,6 +29,7 @@ class HistoryFragment : Fragment(), HistoryContract.View {
     private val LOG_TAG: String = HistoryFragment::class.java.simpleName
 
     override lateinit var presenter: HistoryContract.Presenter
+    private lateinit var spotifyReceiver: SpotifyReceiver
 
     private lateinit var noHistoryTextView: TextView
 
@@ -54,11 +59,21 @@ class HistoryFragment : Fragment(), HistoryContract.View {
 
         }
 
+        spotifyReceiver = SpotifyReceiver()
+
         return rootView
+    }
+
+    override fun onPause() {
+        super.onPause()
+        context?.unregisterReceiver(spotifyReceiver)
     }
 
     override fun onResume() {
         super.onResume()
+        val spotifyIntent = IntentFilter("com.spotify.music.playbackstatechanged")
+        context?.registerReceiver(spotifyReceiver, spotifyIntent)
+
         presenter.start()
     }
 
@@ -73,10 +88,29 @@ class HistoryFragment : Fragment(), HistoryContract.View {
     }
 
     override fun logSong(song: Song) {
-        showToast(song.track)
+        presenter.handleSongBroadcastEvent(song)
     }
 
     companion object {
         fun newInstance() = HistoryFragment()
+    }
+
+    inner class SpotifyReceiver : BroadcastReceiver() {
+        val PLAYBACKSTATE_CHANGED = "com.spotify.music.playbackstatechanged"
+
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent == null || context !is HistoryActivity) return
+            if (intent.action.equals(PLAYBACKSTATE_CHANGED)) {
+                val song = Song(
+                        intent.getStringExtra("id"),
+                        intent.getStringExtra("artist"),
+                        intent.getStringExtra("album"),
+                        intent.getStringExtra("track"),
+                        intent.getIntExtra("length", 0),
+                        System.currentTimeMillis()
+                )
+                logSong(song)
+            }
+        }
     }
 }

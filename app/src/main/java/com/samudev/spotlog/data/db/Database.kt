@@ -5,7 +5,7 @@ import com.samudev.spotlog.data.Song
 // Here is the db... or not.
 object Database {
 
-    fun getSongs(count: Int) : List<Song> {
+    fun getSongs(count: Int) : MutableList<Song> {
         val songs: MutableList<Song> = mutableListOf<Song>()
         for (i in 1..count) {
             songs.add(Song(

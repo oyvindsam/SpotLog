@@ -6,4 +6,5 @@ data class Song(
         var artist: String = "",
         var album: String = "",
         var track: String = "",
-        var trackLengthInSec: Int = 0)
+        var trackLengthInSec: Int = 0,
+        var registeredTime: Long = -1)

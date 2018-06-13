@@ -16,5 +16,6 @@ interface HistoryContract {
 
     interface Presenter : BasePresenter {
         fun handleSongClicked(song: Song)
+        fun handleSongBroadcastEvent(song: Song)
     }
 }

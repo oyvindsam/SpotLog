@@ -44,8 +44,8 @@ class HistoryAdapter(songs: List<Song>,
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val song = songs[position]
-        holder.songView.text = song.trackId
-        holder.artistView.text = song.track
+        holder.songView.text = song.track
+        holder.artistView.text = song.artist
         holder.albumView.text = song.album
 
         with(holder.view) {
