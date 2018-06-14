@@ -17,7 +17,9 @@ interface HistoryContract {
         fun handleSongClicked(song: Song)
         fun handleSongLongClicked(song: Song)
         fun handleSongBroadcastEvent(song: Song)
+        fun handleSongSwiped(position: Int)
         fun loadSongs()
+        fun saveSongs()
         fun clearHistory()
         var currentFiltering: Long
     }

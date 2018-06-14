@@ -16,6 +16,10 @@ interface SongDao {
     @Query("SELECT * FROM song WHERE registered_time > :fromTime ORDER BY registered_time DESC")
     fun getLatest(fromTime: Long): List<Song>
 
+    @Query("DELETE FROM song")
+    fun clearTable()
+
+
     @Insert
     fun insertAll(songs: List<Song>)
 

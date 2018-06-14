@@ -8,13 +8,20 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
+import android.support.v7.widget.helper.ItemTouchHelper.LEFT
 import android.view.*
 import android.widget.PopupMenu
+import android.widget.SimpleAdapter
 import android.widget.TextView
 import android.widget.Toast
 import com.samudev.spotlog.R
+import com.samudev.spotlog.R.id.list
+import com.samudev.spotlog.R.id.noHistoryTextView
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.history.HistoryAdapter.HistoryItemListener
+import kotlinx.android.synthetic.main.history_frag.*
+import java.lang.Thread.sleep
 
 /**
  * A fragment representing a list of Items.
@@ -40,12 +47,13 @@ class HistoryFragment : Fragment(), HistoryContract.View {
         }
     }
 
-    private var listAdapter = HistoryAdapter(ArrayList(0), itemListener)
+    private var listAdapter = HistoryAdapter(itemListener)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
         val rootView = inflater.inflate(R.layout.history_frag, container, false)
+
 
         with(rootView) {
             // Set the adapter
@@ -53,6 +61,18 @@ class HistoryFragment : Fragment(), HistoryContract.View {
             with(recyclerView) {
                 layoutManager = LinearLayoutManager(context)
                 adapter = listAdapter
+
+                val swipeHandler = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+                    override fun onMove(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?, target: RecyclerView.ViewHolder?): Boolean {
+                        return false
+                    }
+
+                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int) {
+                        presenter.handleSongSwiped(viewHolder?.adapterPosition ?: 0)
+                    }
+                }
+                val itemTouchHelper = ItemTouchHelper(swipeHandler)
+                itemTouchHelper.attachToRecyclerView(this)
             }
 
             noHistoryTextView = findViewById(R.id.noHistoryTextView)
@@ -95,11 +115,13 @@ class HistoryFragment : Fragment(), HistoryContract.View {
 
     override fun onPause() {
         super.onPause()
+        // presenter.saveSongs() we do not do this just yet
         context?.unregisterReceiver(spotifyReceiver)
     }
 
     override fun onResume() {
         super.onResume()
+        presenter.start()
         val spotifyIntent = IntentFilter("com.spotify.music.playbackstatechanged")
         context?.registerReceiver(spotifyReceiver, spotifyIntent)
 
@@ -107,7 +129,7 @@ class HistoryFragment : Fragment(), HistoryContract.View {
     }
 
     override fun showSongs(songs: List<Song>) {
-        listAdapter.songs = songs
+        listAdapter.submitList(songs)
         noHistoryTextView.visibility = if (songs.isEmpty()) View.VISIBLE else View.GONE
     }
 
