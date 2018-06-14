@@ -9,7 +9,6 @@ import com.samudev.spotlog.R
 
 
 import com.samudev.spotlog.data.Song
-
 import kotlinx.android.synthetic.main.song_log_item.view.*
 
 /**
@@ -26,13 +25,20 @@ class HistoryAdapter(songs: List<Song>,
             notifyDataSetChanged()
         }
 
-    private val onItemListener: View.OnClickListener
+    private val onItemClickListener: View.OnClickListener
+    private val onItemLongClickListener: View.OnLongClickListener
 
     init {
-        onItemListener = View.OnClickListener { v ->
+        onItemClickListener = View.OnClickListener { v ->
             val item = v.tag as Song
             // Notify the active callbacks interface that an item has been selected.
             itemListener?.onSongClick(item)
+        }
+        onItemLongClickListener = View.OnLongClickListener { v ->
+            val item = v.tag as Song
+            // Notify the active callbacks interface that an item has been selected.
+            itemListener?.onSongLongClick(item)
+            true
         }
     }
 
@@ -44,13 +50,16 @@ class HistoryAdapter(songs: List<Song>,
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val song = songs[position]
-        holder.songView.text = song.track
-        holder.artistView.text = song.artist
-        holder.albumView.text = song.album
+        with(holder) {
+            songView.text = song.track
+            artistView.text = song.artist
+            albumView.text = song.album
+        }
 
         with(holder.view) {
             tag = song
-            setOnClickListener(onItemListener)
+            setOnClickListener(onItemClickListener)
+            setOnLongClickListener(onItemLongClickListener)
         }
     }
 
@@ -69,5 +78,6 @@ class HistoryAdapter(songs: List<Song>,
 
     interface HistoryItemListener {
         fun onSongClick(song: Song?)
+        fun onSongLongClick(song: Song?)
     }
 }

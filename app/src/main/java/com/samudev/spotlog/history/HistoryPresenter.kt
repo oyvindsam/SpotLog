@@ -1,42 +1,54 @@
 package com.samudev.spotlog.history
 
-import android.icu.lang.UCharacter.GraphemeClusterBreak.L
-import android.util.Log
 import com.samudev.spotlog.data.Song
-import com.samudev.spotlog.data.db.Database
+import com.samudev.spotlog.data.db.AppDatabase
+import com.samudev.spotlog.history.HistoryTimeFilter.Companion.FIFTEEN_MINUTES
+import com.samudev.spotlog.history.HistoryTimeFilter.Companion.getTimeAgo
 
 
-class HistoryPresenter(val historyView: HistoryContract.View) : HistoryContract.Presenter {
-
-    companion object {
-        private val FIFTEEN_MINUTES = 900000
-    }
+class HistoryPresenter(val db: AppDatabase, val historyView: HistoryContract.View) : HistoryContract.Presenter {
 
     private val LOG_TAG: String = HistoryPresenter::class.java.simpleName
+    private var songs: MutableList<Song> = mutableListOf()
+    private val songDao = db.songDao()
 
-    private var songs: MutableList<Song> = mutableListOf<Song>()
+    override var currentFiltering = HistoryTimeFilter.ALL
 
     init {
         historyView.presenter = this
-        songs = Database.getSongs(2)
+        songs = songDao.getAll().toMutableList()
     }
 
     override fun start() {
         loadSongs()
     }
 
-    fun loadSongs() {
+    override fun loadSongs() {
+        songs = songDao.getLatest(getTimeAgo(currentFiltering)).toMutableList()
         historyView.showSongs(songs)
     }
 
+    override fun clearHistory() {
+        db.clearAllTables()
+        loadSongs()
+    }
+
     override fun handleSongClicked(song: Song) {
-        historyView.showToast("Song item clicked: ${song.trackId}")
+        historyView.showToast("Song item clicked: ${song.track}")
+    }
+
+    override fun handleSongLongClicked(song: Song) {
+        songDao.deleteSong(song)
+        loadSongs()
     }
 
     override fun handleSongBroadcastEvent(song: Song) {
         // basically check if song is in list and it's under 15 min since last added
         if (songs.stream().anyMatch { s -> s.trackId == song.trackId && song.registeredTime - s.registeredTime < FIFTEEN_MINUTES }) return
-        songs.add(song)
+
+        // TODO: only save songs to db on onPause/onStop, get them on onResume
+        songDao.insertSong(song)
+        songs = songDao.getAll().toMutableList()
         historyView.showSongs(songs)
     }
 }

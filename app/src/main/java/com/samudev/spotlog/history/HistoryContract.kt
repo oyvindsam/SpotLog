@@ -9,13 +9,16 @@ interface HistoryContract {
 
     interface View : BaseView<Presenter> {
         fun showToast(message: String)
-        fun logSong(song: Song)
         fun showSongs(songs: List<Song>)
-
+        fun showFilteringPopUpMenu()
     }
 
     interface Presenter : BasePresenter {
         fun handleSongClicked(song: Song)
+        fun handleSongLongClicked(song: Song)
         fun handleSongBroadcastEvent(song: Song)
+        fun loadSongs()
+        fun clearHistory()
+        var currentFiltering: Long
     }
 }

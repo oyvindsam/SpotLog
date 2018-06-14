@@ -8,14 +8,11 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import com.samudev.spotlog.R
-
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.history.HistoryAdapter.HistoryItemListener
 
@@ -37,6 +34,10 @@ class HistoryFragment : Fragment(), HistoryContract.View {
         override fun onSongClick(song: Song?) {
             if (song != null) presenter.handleSongClicked(song)
         }
+
+        override fun onSongLongClick(song: Song?) {
+            if (song != null) presenter.handleSongLongClicked(song)
+        }
     }
 
     private var listAdapter = HistoryAdapter(ArrayList(0), itemListener)
@@ -47,7 +48,6 @@ class HistoryFragment : Fragment(), HistoryContract.View {
         val rootView = inflater.inflate(R.layout.history_frag, container, false)
 
         with(rootView) {
-
             // Set the adapter
             val recyclerView = findViewById<RecyclerView>(R.id.list)
             with(recyclerView) {
@@ -56,12 +56,41 @@ class HistoryFragment : Fragment(), HistoryContract.View {
             }
 
             noHistoryTextView = findViewById(R.id.noHistoryTextView)
-
         }
+
+        setHasOptionsMenu(true)
 
         spotifyReceiver = SpotifyReceiver()
 
         return rootView
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.history_fragment_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_clear -> presenter.clearHistory()
+            R.id.menu_filter -> showFilteringPopUpMenu()
+        }
+        return true
+    }
+
+    override fun showFilteringPopUpMenu() {
+        PopupMenu(context, activity?.findViewById(R.id.menu_filter)).apply {
+            menuInflater.inflate(R.menu.filter_songs, menu)
+            setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.one_hour -> presenter.currentFiltering = HistoryTimeFilter.ONE_HOUR
+                    R.id.twelve_hours -> presenter.currentFiltering = HistoryTimeFilter.TWELVE_HOURS
+                    else -> presenter.currentFiltering = HistoryTimeFilter.ALL
+                }
+                presenter.loadSongs()
+                true
+            }
+            show()
+        }
     }
 
     override fun onPause() {
@@ -79,7 +108,6 @@ class HistoryFragment : Fragment(), HistoryContract.View {
 
     override fun showSongs(songs: List<Song>) {
         listAdapter.songs = songs
-        listAdapter.notifyDataSetChanged()
         noHistoryTextView.visibility = if (songs.isEmpty()) View.VISIBLE else View.GONE
     }
 
@@ -87,7 +115,7 @@ class HistoryFragment : Fragment(), HistoryContract.View {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
-    override fun logSong(song: Song) {
+    fun logSong(song: Song) {
         presenter.handleSongBroadcastEvent(song)
     }
 

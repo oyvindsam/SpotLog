@@ -1,25 +1,16 @@
 package com.samudev.spotlog.history
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.IntentFilter
+import android.arch.persistence.room.Room
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.MenuItem
-import android.widget.Toast
 import com.samudev.spotlog.R
-import android.content.Intent
-import android.support.v4.widget.DrawerLayout
-import com.samudev.spotlog.R.id.drawer_layout
-import com.samudev.spotlog.R.id.nav_view
-import com.samudev.spotlog.data.Song
-import com.samudev.spotlog.history.HistoryAdapter.HistoryItemListener
-
+import com.samudev.spotlog.R.id.*
+import com.samudev.spotlog.data.db.AppDatabase
+import kotlinx.android.synthetic.main.history_act.*
 
 class HistoryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -28,40 +19,37 @@ class HistoryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     private lateinit var historyPresenter: HistoryPresenter
+    private lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.history_act)
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        val drawerLayout = findViewById<DrawerLayout>(drawer_layout)
 
         val toggle = ActionBarDrawerToggle(
-                this, findViewById(drawer_layout), toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        drawerLayout.addDrawerListener(toggle)
+                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
-        findViewById<NavigationView>(nav_view).setNavigationItemSelectedListener(this)
+        nav_view.setNavigationItemSelectedListener(this)
 
         val historyListFragment = supportFragmentManager.findFragmentById(R.id.contentFrame)
                 as HistoryFragment? ?: HistoryFragment.newInstance().also {
             supportFragmentManager.beginTransaction().add(R.id.contentFrame, it).commit()
         }
 
-        historyPresenter = HistoryPresenter(historyListFragment)
-    }
 
-    private fun logSong(song: Song) {
-        (supportFragmentManager.findFragmentById(R.id.contentFrame)
-                as HistoryFragment).also { it.logSong(song) }
+        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "song-history-db")
+                .addMigrations(AppDatabase.MIGRATION_1_2())
+                .allowMainThreadQueries()
+                .build()
+        historyPresenter = HistoryPresenter(db, historyListFragment)
     }
-
 
     override fun onBackPressed() {
-        val drawerLayout = findViewById<DrawerLayout>(drawer_layout)
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
         }
@@ -80,7 +68,8 @@ class HistoryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
             }
             R.id.nav_manage -> {
-
+                db.clearAllTables()
+                historyPresenter.loadSongs()
             }
             R.id.nav_share -> {
 
@@ -90,7 +79,7 @@ class HistoryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             }
         }
 
-        findViewById<DrawerLayout>(drawer_layout).closeDrawer(GravityCompat.START)
+        drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
 
