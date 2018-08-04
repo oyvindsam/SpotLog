@@ -6,9 +6,9 @@ import android.arch.persistence.room.PrimaryKey
 
 @Entity(primaryKeys = ["track_id", "registered_time"])
 data class Song(
-        @ColumnInfo(name = "track_id") var trackId: String = "",
-        var artist: String = "",
-        var album: String = "",
-        var track: String = "",
-        @ColumnInfo(name = "track_length") var trackLengthInSec: Int = 0,
-        @ColumnInfo(name = "registered_time") var registeredTime: Long = -1)
+        @ColumnInfo(name = "track_id") val trackId: String,
+        val artist: String,
+        val album: String,
+        val track: String,
+        @ColumnInfo(name = "track_length") val trackLengthInSec: Int,
+        @ColumnInfo(name = "registered_time") val registeredTime: Long)

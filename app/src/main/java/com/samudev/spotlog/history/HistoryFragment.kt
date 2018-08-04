@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.support.v7.widget.helper.ItemTouchHelper.LEFT
+import android.util.Log
 import android.view.*
 import android.widget.PopupMenu
 import android.widget.SimpleAdapter
