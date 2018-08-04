@@ -17,8 +17,7 @@ import android.widget.SimpleAdapter
 import android.widget.TextView
 import android.widget.Toast
 import com.samudev.spotlog.R
-import com.samudev.spotlog.R.id.list
-import com.samudev.spotlog.R.id.noHistoryTextView
+import com.samudev.spotlog.R.id.*
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.history.HistoryAdapter.HistoryItemListener
 import kotlinx.android.synthetic.main.history_frag.*
@@ -34,7 +33,7 @@ class HistoryFragment : Fragment(), HistoryContract.View {
     private val LOG_TAG: String = HistoryFragment::class.java.simpleName
 
     override lateinit var presenter: HistoryContract.Presenter
-    private lateinit var spotifyReceiver: SpotifyReceiver
+    private val spotifyReceiver = Spotify.spotifyReceiver(::logSong)
 
     private lateinit var noHistoryTextView: TextView
 
@@ -81,8 +80,6 @@ class HistoryFragment : Fragment(), HistoryContract.View {
 
         setHasOptionsMenu(true)
 
-        spotifyReceiver = SpotifyReceiver()
-
         return rootView
     }
 
@@ -123,8 +120,7 @@ class HistoryFragment : Fragment(), HistoryContract.View {
     override fun onResume() {
         super.onResume()
         presenter.start()
-        val spotifyIntent = IntentFilter("com.spotify.music.playbackstatechanged")
-        context?.registerReceiver(spotifyReceiver, spotifyIntent)
+        context?.registerReceiver(spotifyReceiver, Spotify.SPOTIFY_INTENT_FILTER)
 
         presenter.start()
     }
@@ -139,6 +135,7 @@ class HistoryFragment : Fragment(), HistoryContract.View {
     }
 
     fun logSong(song: Song) {
+        Log.d(LOG_TAG, "Logged song inside app")
         presenter.handleSongBroadcastEvent(song)
     }
 
@@ -146,22 +143,4 @@ class HistoryFragment : Fragment(), HistoryContract.View {
         fun newInstance() = HistoryFragment()
     }
 
-    inner class SpotifyReceiver : BroadcastReceiver() {
-        val PLAYBACKSTATE_CHANGED = "com.spotify.music.playbackstatechanged"
-
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent == null || context !is HistoryActivity) return
-            if (intent.action.equals(PLAYBACKSTATE_CHANGED)) {
-                val song = Song(
-                        intent.getStringExtra("id"),
-                        intent.getStringExtra("artist"),
-                        intent.getStringExtra("album"),
-                        intent.getStringExtra("track"),
-                        intent.getIntExtra("length", 0),
-                        System.currentTimeMillis()
-                )
-                logSong(song)
-            }
-        }
-    }
 }

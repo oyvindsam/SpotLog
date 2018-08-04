@@ -11,4 +11,5 @@
     <string name="one_hour">1 hour</string>
     <string name="menu_filter">Filter</string>
     <string name="menu_clear">Clear history</string>
+    <string name="tile_spotlog">Log track</string>
 </resources>
