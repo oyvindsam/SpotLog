@@ -1,40 +1,28 @@
 package com.samudev.spotlog
 
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
+import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
-import android.util.Log
-import android.widget.Toast
-import com.samudev.spotlog.data.Song
-import com.samudev.spotlog.data.db.AppDatabase
-import com.samudev.spotlog.history.HistoryFragment
-import com.samudev.spotlog.history.Spotify
 
 class SpotLogTileService : TileService() {
 
     private val LOG_TAG: String = SpotLogTileService::class.java.simpleName
 
-    private val spotifyReceiver = Spotify.spotifyReceiver(::log)
-
-    override fun onStopListening() {
-        super.onStopListening()
-        try {
-            this.unregisterReceiver(spotifyReceiver)
-        } catch (e: IllegalArgumentException) {}
-    }
+    private val loggerServiceIntent by lazy { Intent(applicationContext, LoggerService::class.java) }
 
     override fun onClick() {
-        super.onClick()
-        this.registerReceiver(spotifyReceiver, Spotify.SPOTIFY_INTENT_FILTER)
+        when (qsTile.state) {
+            Tile.STATE_ACTIVE -> {
+                stopService(loggerServiceIntent)
+                qsTile.state = Tile.STATE_INACTIVE
+            }
+            else -> {
+                startService(loggerServiceIntent)
+                qsTile.state = Tile.STATE_ACTIVE
+            }
+        }
+        qsTile.updateTile()
     }
-
-    fun log(song: Song) {
-        val id = AppDatabase.getAppDatabase(applicationContext).songDao().insertSong(song)
-        if (id != 0L) Toast.makeText(this, "${song.track} successfully logged with id $id", Toast.LENGTH_SHORT).show()
-    }
-
 
 }
 
