@@ -8,6 +8,7 @@ import android.service.quicksettings.TileService
 import android.util.Log
 import android.widget.Toast
 import com.samudev.spotlog.data.Song
+import com.samudev.spotlog.data.db.AppDatabase
 import com.samudev.spotlog.history.HistoryFragment
 import com.samudev.spotlog.history.Spotify
 
@@ -30,8 +31,8 @@ class SpotLogTileService : TileService() {
     }
 
     fun log(song: Song) {
-        Log.d(LOG_TAG, "Logged ${song.track} in tileService")
-        Toast.makeText(this, "Soon logging this song ${song.track}", Toast.LENGTH_SHORT).show()
+        val id = AppDatabase.getAppDatabase(applicationContext).songDao().insertSong(song)
+        if (id != 0L) Toast.makeText(this, "${song.track} successfully logged with id $id", Toast.LENGTH_SHORT).show()
     }
 
 

@@ -10,7 +10,7 @@ import kotlin.concurrent.thread
 class HistoryPresenter(val db: AppDatabase, val historyView: HistoryContract.View) : HistoryContract.Presenter {
 
     private val LOG_TAG: String = HistoryPresenter::class.java.simpleName
-    private var songs: MutableList<Song> = mutableListOf()
+    private var songs: MutableList<Song> = mutableListOf()  // TODO: statisk typing anyone
     private val songDao = db.songDao()
 
     override var currentFiltering = HistoryTimeFilter.ALL
@@ -60,7 +60,7 @@ class HistoryPresenter(val db: AppDatabase, val historyView: HistoryContract.Vie
         if (songs.stream().anyMatch { s -> s.trackId == song.trackId && song.registeredTime - s.registeredTime < FIFTEEN_MINUTES }) return
         songDao.insertSong(song)
 
-        // TODO: only save songs to db on onPause/onStop, get them on onResume
+        // livedata anyone?
         loadSongs()
     }
 }

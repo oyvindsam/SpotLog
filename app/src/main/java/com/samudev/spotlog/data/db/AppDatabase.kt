@@ -2,8 +2,10 @@ package com.samudev.spotlog.data.db
 
 import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.Database
+import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.migration.Migration
+import android.content.Context
 import com.samudev.spotlog.data.Song
 
 
@@ -12,6 +14,14 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun songDao(): SongDao
 
     companion object {
+
+        fun getAppDatabase(context: Context): AppDatabase {
+            return Room.databaseBuilder(context, AppDatabase::class.java, "song-history-db")
+                    .addMigrations(AppDatabase.MIGRATION_1_2())
+                    .allowMainThreadQueries()  // TODO: async
+                    .build()
+        }
+
         fun MIGRATION_1_2(): Migration {
             val migration: Migration = object: Migration(1, 2) {
                 override fun migrate(database: SupportSQLiteDatabase) {

@@ -19,7 +19,6 @@ class HistoryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     private lateinit var historyPresenter: HistoryPresenter
-    private lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,11 +38,8 @@ class HistoryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             supportFragmentManager.beginTransaction().add(R.id.contentFrame, it).commit()
         }
 
+        val db = AppDatabase.getAppDatabase(applicationContext)
 
-        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "song-history-db")
-                .addMigrations(AppDatabase.MIGRATION_1_2())
-                .allowMainThreadQueries()
-                .build()
         historyPresenter = HistoryPresenter(db, historyListFragment)
     }
 
@@ -68,7 +64,6 @@ class HistoryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
             }
             R.id.nav_manage -> {
-                db.clearAllTables()
                 historyPresenter.loadSongs()
             }
             R.id.nav_share -> {

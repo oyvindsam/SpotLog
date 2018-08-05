@@ -24,8 +24,8 @@ interface SongDao {
     fun insertAll(songs: List<Song>)
 
     @Insert
-    fun insertSong(song: Song)
+    fun insertSong(song: Song): Long
 
     @Delete
-    fun deleteSong(song: Song)
+    fun deleteSong(song: Song): Int
 }
