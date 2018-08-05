@@ -5,7 +5,7 @@ import com.samudev.spotlog.BaseView
 import com.samudev.spotlog.data.Song
 
 
-interface HistoryContract {
+interface LogContract {
 
     interface View : BaseView<Presenter> {
         fun showToast(message: String)
@@ -18,8 +18,7 @@ interface HistoryContract {
         fun handleSongLongClicked(song: Song)
         fun handleSongBroadcastEvent(song: Song)
         fun handleSongSwiped(position: Int)
-        fun loadSongs()
-        fun saveSongs()
+        fun loadSongs(newSongs: List<Song>? = null)
         fun clearHistory()
         var currentFiltering: Long
     }

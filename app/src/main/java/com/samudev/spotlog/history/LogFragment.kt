@@ -1,38 +1,29 @@
 package com.samudev.spotlog.history
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.support.v7.widget.helper.ItemTouchHelper.LEFT
 import android.util.Log
 import android.view.*
 import android.widget.PopupMenu
-import android.widget.SimpleAdapter
 import android.widget.TextView
 import android.widget.Toast
 import com.samudev.spotlog.R
-import com.samudev.spotlog.R.id.*
 import com.samudev.spotlog.data.Song
-import com.samudev.spotlog.history.HistoryAdapter.HistoryItemListener
-import kotlinx.android.synthetic.main.history_frag.*
-import java.lang.Thread.sleep
+import com.samudev.spotlog.history.LogAdapter.HistoryItemListener
 
 /**
  * A fragment representing a list of Items.
  * Activities containing this fragment MUST implement the
- * [HistoryAdapter.HistoryItemListener] interface.
+ * [LogAdapter.HistoryItemListener] interface.
  */
-class HistoryFragment : Fragment(), HistoryContract.View {
+class LogFragment : Fragment(), LogContract.View {
 
-    private val LOG_TAG: String = HistoryFragment::class.java.simpleName
+    private val LOG_TAG: String = LogFragment::class.java.simpleName
 
-    override lateinit var presenter: HistoryContract.Presenter
+    override lateinit var presenter: LogContract.Presenter
     private val spotifyReceiver = Spotify.spotifyReceiver(::logSong)
 
     private lateinit var noHistoryTextView: TextView
@@ -47,7 +38,7 @@ class HistoryFragment : Fragment(), HistoryContract.View {
         }
     }
 
-    private var listAdapter = HistoryAdapter(itemListener)
+    private var listAdapter = LogAdapter(itemListener)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -100,9 +91,9 @@ class HistoryFragment : Fragment(), HistoryContract.View {
             menuInflater.inflate(R.menu.filter_songs, menu)
             setOnMenuItemClickListener { item ->
                 when (item.itemId) {
-                    R.id.one_hour -> presenter.currentFiltering = HistoryTimeFilter.ONE_HOUR
-                    R.id.twelve_hours -> presenter.currentFiltering = HistoryTimeFilter.TWELVE_HOURS
-                    else -> presenter.currentFiltering = HistoryTimeFilter.ALL
+                    R.id.one_hour -> presenter.currentFiltering = LogTimeFilter.ONE_HOUR
+                    R.id.twelve_hours -> presenter.currentFiltering = LogTimeFilter.TWELVE_HOURS
+                    else -> presenter.currentFiltering = LogTimeFilter.ALL
                 }
                 presenter.loadSongs()
                 true
@@ -140,7 +131,7 @@ class HistoryFragment : Fragment(), HistoryContract.View {
     }
 
     companion object {
-        fun newInstance() = HistoryFragment()
+        fun newInstance() = LogFragment()
     }
 
 }

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.util.Log
 import com.samudev.spotlog.data.Song
 
 
@@ -16,8 +17,7 @@ class Spotify {
         fun spotifyReceiver(callback:((Song) -> Unit)): BroadcastReceiver {
             return object : BroadcastReceiver() {
                 override fun onReceive(context: Context?, intent: Intent?) {
-                    if (intent == null) return  // TODO: add check if this is the same context as then one who made the rec
-                    if (intent.action == SPOTIFY_PLAYBACK_STATE_CHANGED) {
+                    if (intent?.action == SPOTIFY_PLAYBACK_STATE_CHANGED) {
                         val song = Song(
                                 intent.getStringExtra("id"),
                                 intent.getStringExtra("artist"),

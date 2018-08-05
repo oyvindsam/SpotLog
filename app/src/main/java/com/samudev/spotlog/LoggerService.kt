@@ -13,8 +13,8 @@ class LoggerService : Service() {
     private val spotifyReceiver = Spotify.spotifyReceiver(::log)
 
     private fun log(song: Song) {
-        val id = AppDatabase.getAppDatabase(applicationContext).songDao().insertSong(song)
-        if (id != 0L) Toast.makeText(this, "${song.track} successfully logged with id $id", Toast.LENGTH_SHORT).show()
+        val id = AppDatabase.getAppDatabase(applicationContext)?.songDao()?.insertSong(song) ?: throw IllegalStateException("Database not found!")
+        Toast.makeText(this, "${song.track} logged, id: $id", Toast.LENGTH_SHORT).show()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

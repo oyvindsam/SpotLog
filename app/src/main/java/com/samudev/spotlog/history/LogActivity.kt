@@ -1,24 +1,25 @@
 package com.samudev.spotlog.history
 
-import android.arch.persistence.room.Room
+import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.MenuItem
 import com.samudev.spotlog.R
-import com.samudev.spotlog.R.id.*
+import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.data.db.AppDatabase
 import kotlinx.android.synthetic.main.history_act.*
 
-class HistoryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class LogActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     companion object {
-        private val LOG_TAG: String = HistoryActivity::class.java.simpleName
+        private val LOG_TAG: String = LogActivity::class.java.simpleName
     }
 
-    private lateinit var historyPresenter: HistoryPresenter
+    private lateinit var logPresenter: LogPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,13 +35,13 @@ class HistoryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         nav_view.setNavigationItemSelectedListener(this)
 
         val historyListFragment = supportFragmentManager.findFragmentById(R.id.contentFrame)
-                as HistoryFragment? ?: HistoryFragment.newInstance().also {
+                as LogFragment? ?: LogFragment.newInstance().also {
             supportFragmentManager.beginTransaction().add(R.id.contentFrame, it).commit()
         }
 
-        val db = AppDatabase.getAppDatabase(applicationContext)
+        val db = AppDatabase.getAppDatabase(applicationContext) ?: throw IllegalStateException("Database not found!")
 
-        historyPresenter = HistoryPresenter(db, historyListFragment)
+        logPresenter = LogPresenter(db, historyListFragment)
     }
 
     override fun onBackPressed() {
@@ -64,13 +65,13 @@ class HistoryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
             }
             R.id.nav_manage -> {
-                historyPresenter.loadSongs()
+                logPresenter.loadSongs()
             }
             R.id.nav_share -> {
 
             }
             R.id.nav_send -> {
-                historyPresenter.start()
+                logPresenter.start()
             }
         }
 
