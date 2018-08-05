@@ -1,11 +1,17 @@
 SpotLog
 
 Ting som må gjøres:
-1. Db transaksjoner async
-2. Livedata?
-3. fjerne navigationdrawer siden ikke brukt
-4. Settings side
+- Db transaksjoner async
+- ~~Livedata?~~
+- fjerne navigationdrawer siden ikke brukt
+- Settings side 
 
 For framtiden
-5. gå over til mvvm
-6. koble opp til spotify rest api
+- gå over til mvvm
+- koble opp til spotify rest api
+
+
+Settings:
+
+- Velge hvor mange sanger som blir lagret i loggen (db)
+- Skru på/av backgroundservice/foreground. 
