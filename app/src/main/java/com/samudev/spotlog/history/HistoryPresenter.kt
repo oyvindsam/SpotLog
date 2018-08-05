@@ -2,6 +2,7 @@ package com.samudev.spotlog.history
 
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.data.db.AppDatabase
+import com.samudev.spotlog.data.db.insertConditionally
 import com.samudev.spotlog.history.HistoryTimeFilter.Companion.FIFTEEN_MINUTES
 import com.samudev.spotlog.history.HistoryTimeFilter.Companion.getTimeAgo
 import kotlin.concurrent.thread
@@ -56,10 +57,7 @@ class HistoryPresenter(val db: AppDatabase, val historyView: HistoryContract.Vie
     }
 
     override fun handleSongBroadcastEvent(song: Song) {
-        // basically check if song is in list and it's under 15 min since last added
-        if (songs.stream().anyMatch { s -> s.trackId == song.trackId && song.registeredTime - s.registeredTime < FIFTEEN_MINUTES }) return
-        songDao.insertSong(song)
-
+        songDao.insertConditionally(song, songs, HistoryTimeFilter.FIFTEEN_MINUTES)
         // livedata anyone?
         loadSongs()
     }

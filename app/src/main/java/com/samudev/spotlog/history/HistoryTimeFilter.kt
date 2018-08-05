@@ -6,10 +6,10 @@ package com.samudev.spotlog.history
  */
 class HistoryTimeFilter {
     companion object {
-        const val FIFTEEN_MINUTES = 900000
+        const val FIFTEEN_MINUTES = 900000L
         const val ONE_HOUR = 3600000L
         const val TWELVE_HOURS = 12 * ONE_HOUR
-        const val ALL = 9999999999
+        const val ALL = 9999999999L
 
         fun getTimeAgo(time: Long): Long {
             return System.currentTimeMillis() - time
