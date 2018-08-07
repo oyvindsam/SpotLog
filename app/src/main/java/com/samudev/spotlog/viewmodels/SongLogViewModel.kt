@@ -11,11 +11,13 @@ import com.samudev.spotlog.history.LogTimeFilter
 
 class SongLogViewModel(private val songRepository: SongRepository) : ViewModel() {
 
+    private val LOG_TAG: String = SongLogViewModel::class.java.simpleName
+
     private val logFilter = MutableLiveData<Long>()
     private val songLog = MediatorLiveData<List<Song>>()
 
     init {
-        logFilter.value = LogTimeFilter.ALL
+        logFilter.value = LogTimeFilter.ONE_HOUR
 
         val filteredSongLog = Transformations.switchMap(logFilter) {
             if (it == LogTimeFilter.ALL) songRepository.getSongsAll()
@@ -25,6 +27,10 @@ class SongLogViewModel(private val songRepository: SongRepository) : ViewModel()
     }
 
     fun getSongs() = songLog
+
+    fun removeSong(song: Song) = songRepository.removeSong(song)
+
+    fun clearSongs() = songRepository.clearSongs()
 
     fun setLogFilter(value: Long) {
         logFilter.value = when(value) {

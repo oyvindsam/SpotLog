@@ -5,7 +5,7 @@ import com.samudev.spotlog.utilities.runOnIoThread
 
 class SongRepository(private val songDao: SongDao) {
 
-    fun getSongsLatest(fromTime: Long) = songDao.getLatest(fromTime)
+    fun getSongsLatest(fromTime: Long) = songDao.getLatest(System.currentTimeMillis() - fromTime)
 
     fun getSongsAll() = songDao.getAll()
 
@@ -14,6 +14,14 @@ class SongRepository(private val songDao: SongDao) {
             songDao.insertSong(song)
         }
     }
+
+    fun removeSong(song: Song) {
+        runOnIoThread {
+            songDao.deleteSong(song)
+        }
+    }
+
+    fun clearSongs() = songDao.clearTable()
 
     companion object {
 

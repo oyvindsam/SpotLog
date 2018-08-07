@@ -8,14 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import com.samudev.spotlog.R
 import com.samudev.spotlog.data.Song
-import com.samudev.spotlog.history.LogAdapter.HistoryItemListener
+import com.samudev.spotlog.history.LogAdapter.LogItemListener
 import kotlinx.android.synthetic.main.song_log_item.view.*
 
 /**
  * [ListAdapter] that can display a [Song] and makes a call to the
- * specified [HistoryItemListener].
+ * specified [LogItemListener].
  */
-class LogAdapter(private val itemListener: HistoryItemListener?)
+class LogAdapter(private val itemListener: LogItemListener?)
     : ListAdapter<Song, LogAdapter.ViewHolder>(SongDiffCallback()) {
 
     // listeners for the callback interface
@@ -60,7 +60,7 @@ class LogAdapter(private val itemListener: HistoryItemListener?)
         }
     }
 
-    interface HistoryItemListener {
+    interface LogItemListener {
         fun onSongClick(song: Song?)
         fun onSongLongClick(song: Song?)
     }
