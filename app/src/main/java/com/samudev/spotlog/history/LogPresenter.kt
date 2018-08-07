@@ -3,10 +3,9 @@ package com.samudev.spotlog.history
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.Observer
 import android.util.Log
+import com.samudev.spotlog.data.AppDatabase
 import com.samudev.spotlog.data.Song
-import com.samudev.spotlog.data.db.AppDatabase
-import com.samudev.spotlog.data.db.SongDao
-import com.samudev.spotlog.data.db.insertConditionally
+import com.samudev.spotlog.data.SongDao
 
 
 class LogPresenter(db: AppDatabase, val logView: LogContract.View) : LogContract.Presenter {

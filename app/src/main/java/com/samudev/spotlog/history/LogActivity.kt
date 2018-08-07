@@ -3,7 +3,7 @@ package com.samudev.spotlog.history
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.samudev.spotlog.R
-import com.samudev.spotlog.data.db.AppDatabase
+import com.samudev.spotlog.data.AppDatabase
 import kotlinx.android.synthetic.main.history_act.*
 
 class LogActivity : AppCompatActivity() {
