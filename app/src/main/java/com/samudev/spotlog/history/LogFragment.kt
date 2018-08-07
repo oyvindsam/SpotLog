@@ -19,22 +19,22 @@ import com.samudev.spotlog.history.LogAdapter.HistoryItemListener
  * Activities containing this fragment MUST implement the
  * [LogAdapter.HistoryItemListener] interface.
  */
-class LogFragment : Fragment(), LogContract.View {
+class LogFragment : Fragment() {
 
     private val LOG_TAG: String = LogFragment::class.java.simpleName
 
-    override lateinit var presenter: LogContract.Presenter
     private val spotifyReceiver = Spotify.spotifyReceiver(::logSong)
 
     private lateinit var noHistoryTextView: TextView
 
+
     private var itemListener: HistoryItemListener = object : HistoryItemListener {
         override fun onSongClick(song: Song?) {
-            if (song != null) presenter.handleSongClicked(song)
+            if (song != null) Log.d(LOG_TAG, "${song.track} Clicked")
         }
 
         override fun onSongLongClick(song: Song?) {
-            if (song != null) presenter.handleSongLongClicked(song)
+            if (song != null) Log.d(LOG_TAG, "${song.track} Lock clicked")
         }
     }
 
@@ -45,6 +45,7 @@ class LogFragment : Fragment(), LogContract.View {
 
         val rootView = inflater.inflate(R.layout.history_frag, container, false)
 
+        val factory =
 
         with(rootView) {
             // Set the adapter
@@ -59,7 +60,7 @@ class LogFragment : Fragment(), LogContract.View {
                     }
 
                     override fun onSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int) {
-                        presenter.handleSongSwiped(viewHolder?.adapterPosition ?: 0)
+                        Log.d(LOG_TAG, "Position: ${(viewHolder?.adapterPosition ?: 0)}")
                     }
                 }
                 val itemTouchHelper = ItemTouchHelper(swipeHandler)
@@ -80,22 +81,21 @@ class LogFragment : Fragment(), LogContract.View {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_clear -> presenter.clearHistory()
+            R.id.menu_clear -> Log.d(LOG_TAG, "Clear history")
             R.id.menu_filter -> showFilteringPopUpMenu()
         }
         return true
     }
 
-    override fun showFilteringPopUpMenu() {
+    fun showFilteringPopUpMenu() {
         PopupMenu(context, activity?.findViewById(R.id.menu_filter)).apply {
             menuInflater.inflate(R.menu.filter_songs, menu)
             setOnMenuItemClickListener { item ->
                 when (item.itemId) {
-                    R.id.one_hour -> presenter.currentFiltering = LogTimeFilter.ONE_HOUR
-                    R.id.twelve_hours -> presenter.currentFiltering = LogTimeFilter.TWELVE_HOURS
-                    else -> presenter.currentFiltering = LogTimeFilter.ALL
+                    R.id.one_hour -> Log.d(LOG_TAG, "CurrentFiltering: ${LogTimeFilter.ONE_HOUR}")
+                    R.id.twelve_hours -> Log.d(LOG_TAG, "CurrentFiltering: ${LogTimeFilter.TWELVE_HOURS}")
+                    else ->Log.d(LOG_TAG, "CurrentFiltering: ${LogTimeFilter.ALL}")
                 }
-                presenter.loadSongs()
                 true
             }
             show()
@@ -110,24 +110,20 @@ class LogFragment : Fragment(), LogContract.View {
 
     override fun onResume() {
         super.onResume()
-        presenter.start()
         context?.registerReceiver(spotifyReceiver, Spotify.SPOTIFY_INTENT_FILTER)
-
-        presenter.start()
     }
 
-    override fun showSongs(songs: List<Song>) {
+    fun showSongs(songs: List<Song>) {
         listAdapter.submitList(songs)
         noHistoryTextView.visibility = if (songs.isEmpty()) View.VISIBLE else View.GONE
     }
 
-    override fun showToast(message: String) {
+    fun showToast(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
     fun logSong(song: Song) {
         Log.d(LOG_TAG, "Logged song inside app")
-        presenter.handleSongBroadcastEvent(song)
     }
 
     companion object {
