@@ -66,6 +66,7 @@ class LogFragment : Fragment() {
         viewModel.getSongs().observe(viewLifecycleOwner, Observer { songs ->
             if (songs != null) {
                 adapter.submitList(songs)
+                noHistoryTextView.visibility = if (songs.isEmpty()) View.VISIBLE else View.GONE
             }
         })
     }
