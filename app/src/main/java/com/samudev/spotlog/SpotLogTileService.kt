@@ -1,7 +1,6 @@
 package com.samudev.spotlog
 
 import android.service.quicksettings.TileService
-import android.util.Log
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.data.SongRepository
 import com.samudev.spotlog.history.Spotify
@@ -23,12 +22,14 @@ class SpotLogTileService : TileService() {
     }
 
     override fun onStopListening() {
-        this.unregisterReceiver(spotifyReceiver)
+        try {
+            this.unregisterReceiver(spotifyReceiver)
+        } catch (e: Exception) {}
+
         super.onStopListening()
     }
 
     private fun log(song: Song) {
-        Log.d(LOG_TAG, "Tileserive log called")
         repository?.saveSong(song)
     }
 

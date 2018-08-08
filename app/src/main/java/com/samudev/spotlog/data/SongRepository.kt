@@ -14,13 +14,11 @@ class SongRepository(private val songDao: SongDao) {
     private var songs = songDao.getAll()
 
     fun getSongsLatest(fromTime: Long): LiveData<List<Song>> {
-        Log.d(LOG_TAG, "songLatest")
         songs = songDao.getLatest(System.currentTimeMillis() - fromTime)
         return songs
     }
 
     fun getSongsAll(): LiveData<List<Song>> {
-        Log.d(LOG_TAG, "songAll")
         songs = songDao.getAll()
         return songs
 
@@ -28,7 +26,6 @@ class SongRepository(private val songDao: SongDao) {
 
     // log song if it is not recently logged
     fun logSong(song: Song) {
-        Log.d(LOG_TAG, "logSong")
         runOnIoThread {
             songDao.insertConditionally(song, songs.value, LogTimeFilter.FIFTEEN_MINUTES)
         }
