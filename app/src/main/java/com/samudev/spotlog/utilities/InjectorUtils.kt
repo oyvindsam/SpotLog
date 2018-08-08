@@ -16,4 +16,8 @@ object InjectorUtils {
         val repository = getSongRepository(context)
         return SongLogViewModelFactory(repository)
     }
+
+    fun provideSongRepository(context: Context): SongRepository {
+        return getSongRepository(context)
+    }
 }
