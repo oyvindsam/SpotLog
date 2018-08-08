@@ -34,7 +34,7 @@ class SongLogViewModel(private val songRepository: SongRepository) : ViewModel()
 
     fun setLogFilter(value: Long) {
         logFilter.value = when(value) {
-            LogTimeFilter.FIFTEEN_MINUTES -> LogTimeFilter.FIFTEEN_MINUTES
+            LogTimeFilter.ONE_MINUTE -> LogTimeFilter.ONE_MINUTE
             LogTimeFilter.ONE_HOUR -> LogTimeFilter.ONE_HOUR
             LogTimeFilter.TWELVE_HOURS -> LogTimeFilter.TWELVE_HOURS
             else -> LogTimeFilter.ALL

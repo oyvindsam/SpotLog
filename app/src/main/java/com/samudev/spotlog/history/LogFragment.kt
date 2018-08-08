@@ -2,6 +2,7 @@ package com.samudev.spotlog.history
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
@@ -9,7 +10,7 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.*
 import android.widget.PopupMenu
 import android.widget.TextView
-import android.widget.Toast
+import com.samudev.spotlog.LoggerService
 import com.samudev.spotlog.R
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.utilities.InjectorUtils
@@ -24,7 +25,7 @@ class LogFragment : Fragment() {
 
     private val LOG_TAG: String = LogFragment::class.java.simpleName
 
-    private val spotifyReceiver = Spotify.spotifyReceiver(::logSong)
+    private val loggerServiceIntent by lazy { Intent(context, LoggerService::class.java) }
 
     private lateinit var noHistoryTextView: TextView
 
@@ -86,6 +87,7 @@ class LogFragment : Fragment() {
             menuInflater.inflate(R.menu.filter_songs, menu)
             setOnMenuItemClickListener { item ->
                 when(item.itemId) {
+                    R.id.one_minute -> viewModel.setLogFilter(LogTimeFilter.ONE_MINUTE)
                     R.id.one_hour -> viewModel.setLogFilter(LogTimeFilter.ONE_HOUR)
                     R.id.twelve_hours -> viewModel.setLogFilter(LogTimeFilter.TWELVE_HOURS)
                     else -> viewModel.setLogFilter(LogTimeFilter.ALL)
@@ -98,16 +100,13 @@ class LogFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        context?.unregisterReceiver(spotifyReceiver)
+        // FIXME: this will also stop tileServie's logger
+        context?.stopService(loggerServiceIntent)
     }
 
     override fun onResume() {
         super.onResume()
-        context?.registerReceiver(spotifyReceiver, Spotify.SPOTIFY_INTENT_FILTER)
-    }
-
-    fun logSong(song: Song) {
-        Toast.makeText(context, "${song.track} clicked", Toast.LENGTH_SHORT).show()
+        context?.startService(loggerServiceIntent)
     }
 
     companion object {

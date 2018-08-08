@@ -1,27 +1,34 @@
 package com.samudev.spotlog.data
 
 import android.arch.lifecycle.LiveData
+import android.util.Log
 import com.samudev.spotlog.history.LogTimeFilter
 import com.samudev.spotlog.utilities.runOnIoThread
 
 
 class SongRepository(private val songDao: SongDao) {
 
+    private val LOG_TAG: String = SongRepository::class.java.simpleName
+
     // Keep a local cache of songs
-    private lateinit var songs: LiveData<List<Song>>
+    private var songs = songDao.getAll()
 
     fun getSongsLatest(fromTime: Long): LiveData<List<Song>> {
+        Log.d(LOG_TAG, "songLatest")
         songs = songDao.getLatest(System.currentTimeMillis() - fromTime)
         return songs
     }
 
     fun getSongsAll(): LiveData<List<Song>> {
+        Log.d(LOG_TAG, "songAll")
         songs = songDao.getAll()
         return songs
+
     }
 
     // log song if it is not recently logged
     fun logSong(song: Song) {
+        Log.d(LOG_TAG, "logSong")
         runOnIoThread {
             songDao.insertConditionally(song, songs.value, LogTimeFilter.FIFTEEN_MINUTES)
         }
@@ -55,7 +62,8 @@ class SongRepository(private val songDao: SongDao) {
 }
 
 fun SongDao.insertConditionally(song: Song, songs: List<Song>?, time: Long): Boolean {
-    if (songs != null && songs.any { s -> s.trackId == song.trackId && song.registeredTime - s.registeredTime < time }) return false
+    if (songs != null && songs.any { s -> s.trackId == song.trackId && s.registeredTime - song.registeredTime < time }) return false
+    Log.d("SongDao-", "New Song saved in db")
     insertSong(song)
     return true
 }
