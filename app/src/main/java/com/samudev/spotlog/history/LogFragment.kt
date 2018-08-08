@@ -4,17 +4,14 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.util.Log
 import android.view.*
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import com.samudev.spotlog.R
 import com.samudev.spotlog.data.Song
-import com.samudev.spotlog.history.LogAdapter.LogItemListener
 import com.samudev.spotlog.utilities.InjectorUtils
 import com.samudev.spotlog.viewmodels.SongLogViewModel
 
@@ -33,53 +30,34 @@ class LogFragment : Fragment() {
 
     private lateinit var viewModel: SongLogViewModel
 
-    private var itemListener: LogItemListener = object : LogItemListener {
-        override fun onSongClick(song: Song?) {
-            if (song != null) Log.d(LOG_TAG, "${song.track} Clicked")
-        }
-
-        override fun onSongLongClick(song: Song?) {
-            if (song != null) Log.d(LOG_TAG, "${song.track} Lock clicked")
-        }
-    }
-
-    private var listAdapter = LogAdapter(itemListener)
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        val rootView = inflater.inflate(R.layout.history_frag, container, false)
+        val rootView = inflater.inflate(R.layout.log_fragment, container, false)
 
+        // TODO: Dagger2
         val factory = InjectorUtils.provideSongLogViewModelFactory(requireContext())
         viewModel = ViewModelProviders.of(this, factory).get(SongLogViewModel::class.java)
 
+        val listAdapter = LogAdapter()
         subscribeUi(listAdapter)
 
-        with(rootView) {
-            // Set the adapter
-            val recyclerView = findViewById<RecyclerView>(R.id.list)
-            with(recyclerView) {
-                layoutManager = LinearLayoutManager(context)
-                adapter = listAdapter
+        val recyclerView = rootView.findViewById<RecyclerView>(R.id.song_list)
+        recyclerView.adapter = listAdapter
 
-                val swipeHandler = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-                    override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
-                        return true
-                    }
-
-                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, position: Int) {
-                        viewModel.removeSong(viewHolder.itemView.tag as Song)
-                    }
-                }
-                val itemTouchHelper = ItemTouchHelper(swipeHandler)
-                itemTouchHelper.attachToRecyclerView(this)
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
+                return true
             }
 
-            noHistoryTextView = findViewById(R.id.noHistoryTextView)
-        }
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, position: Int) {
+                viewModel.removeSong(viewHolder.itemView.tag as Song)
+            }
+        }).attachToRecyclerView(recyclerView)
+
+        noHistoryTextView = rootView.findViewById(R.id.noHistoryTextView)
 
         setHasOptionsMenu(true)
-
         return rootView
     }
 
@@ -103,11 +81,11 @@ class LogFragment : Fragment() {
         return true
     }
 
-    fun showFilteringPopUpMenu() {
+    private fun showFilteringPopUpMenu() {
         PopupMenu(context, activity?.findViewById(R.id.menu_filter)).apply {
             menuInflater.inflate(R.menu.filter_songs, menu)
             setOnMenuItemClickListener { item ->
-                when (item.itemId) {
+                when(item.itemId) {
                     R.id.one_hour -> viewModel.setLogFilter(LogTimeFilter.ONE_HOUR)
                     R.id.twelve_hours -> viewModel.setLogFilter(LogTimeFilter.TWELVE_HOURS)
                     else -> viewModel.setLogFilter(LogTimeFilter.ALL)

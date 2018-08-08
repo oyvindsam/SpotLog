@@ -1,9 +1,10 @@
 package com.samudev.spotlog.history
 
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.samudev.spotlog.R
-import kotlinx.android.synthetic.main.history_act.*
+import com.samudev.spotlog.databinding.LogActivityBinding
 
 class LogActivity : AppCompatActivity() {
 
@@ -13,9 +14,9 @@ class LogActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.history_act)
+        val binding: LogActivityBinding = DataBindingUtil.setContentView(this, R.layout.log_activity)
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
 
         val historyListFragment = supportFragmentManager.findFragmentById(R.id.contentFrame)
                 as LogFragment? ?: LogFragment.newInstance().also {

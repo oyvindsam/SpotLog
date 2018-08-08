@@ -17,7 +17,7 @@ class SongLogViewModel(private val songRepository: SongRepository) : ViewModel()
     private val songLog = MediatorLiveData<List<Song>>()
 
     init {
-        logFilter.value = LogTimeFilter.ONE_HOUR
+        logFilter.value = LogTimeFilter.ALL
 
         val filteredSongLog = Transformations.switchMap(logFilter) {
             if (it == LogTimeFilter.ALL) songRepository.getSongsAll()
