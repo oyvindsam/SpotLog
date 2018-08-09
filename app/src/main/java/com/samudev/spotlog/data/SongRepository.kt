@@ -2,11 +2,12 @@ package com.samudev.spotlog.data
 
 import android.arch.lifecycle.LiveData
 import android.util.Log
-import com.samudev.spotlog.history.LogTimeFilter
+import com.samudev.spotlog.log.LogTimeFilter
 import com.samudev.spotlog.utilities.runOnIoThread
+import javax.inject.Inject
 
 
-class SongRepository(private val songDao: SongDao) {
+class SongRepository @Inject constructor(val songDao: SongDao) {
 
     private val LOG_TAG: String = SongRepository::class.java.simpleName
 

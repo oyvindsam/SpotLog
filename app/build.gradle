@@ -50,5 +50,9 @@ dependencies {
     kapt "android.arch.persistence.room:compiler:$roomVersion"
     implementation "android.arch.lifecycle:extensions:$lifecycleVersion"
 
+    implementation 'com.google.dagger:dagger:2.16'
+    kapt 'com.google.dagger:dagger-compiler:2.16'
+    kapt 'com.google.dagger:dagger-android-processor:2.16'
+
     testImplementation 'junit:junit:4.12'
 }

@@ -6,6 +6,7 @@ import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.migration.Migration
 import android.content.Context
+import javax.inject.Inject
 
 @Database(entities = arrayOf(Song::class) , version = 2, exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
@@ -16,6 +17,7 @@ abstract class AppDatabase : RoomDatabase() {
         // For Singleton instantiation
         @Volatile private var instance: AppDatabase? = null
 
+        @Inject
         fun getInstance(context: Context): AppDatabase {
             return instance ?: synchronized(this) {
                 instance ?: Room.databaseBuilder(context, AppDatabase::class.java, "song-history-db")

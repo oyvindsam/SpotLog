@@ -1,4 +1,4 @@
-package com.samudev.spotlog.history
+package com.samudev.spotlog.log
 
 
 import android.support.v7.recyclerview.extensions.ListAdapter

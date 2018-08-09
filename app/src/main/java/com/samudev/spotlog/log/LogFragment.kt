@@ -1,4 +1,4 @@
-package com.samudev.spotlog.history
+package com.samudev.spotlog.log
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -13,7 +13,6 @@ import android.widget.TextView
 import com.samudev.spotlog.LoggerService
 import com.samudev.spotlog.R
 import com.samudev.spotlog.data.Song
-import com.samudev.spotlog.utilities.InjectorUtils
 import com.samudev.spotlog.viewmodels.SongLogViewModel
 
 /**
@@ -29,16 +28,14 @@ class LogFragment : Fragment() {
 
     private lateinit var noHistoryTextView: TextView
 
-    private lateinit var viewModel: SongLogViewModel
+    lateinit var viewModel: SongLogViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
         val rootView = inflater.inflate(R.layout.log_fragment, container, false)
 
-        // TODO: Dagger2
-        val factory = InjectorUtils.provideSongLogViewModelFactory(requireContext())
-        viewModel = ViewModelProviders.of(this, factory).get(SongLogViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(SongLogViewModel::class.java)
 
         val listAdapter = LogAdapter()
         subscribeUi(listAdapter)

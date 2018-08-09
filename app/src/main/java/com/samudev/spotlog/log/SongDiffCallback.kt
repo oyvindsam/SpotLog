@@ -1,4 +1,4 @@
-package com.samudev.spotlog.history
+package com.samudev.spotlog.log
 
 import android.support.v7.util.DiffUtil
 import com.samudev.spotlog.data.Song

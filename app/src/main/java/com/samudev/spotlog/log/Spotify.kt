@@ -1,10 +1,9 @@
-package com.samudev.spotlog.history
+package com.samudev.spotlog.log
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.util.Log
 import com.samudev.spotlog.data.Song
 
 
