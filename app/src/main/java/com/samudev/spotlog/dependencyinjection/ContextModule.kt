@@ -9,6 +9,7 @@ class ContextModule(private val context: Context) {
 
     @Provides
     @SpotLogScope
+    @ApplicationContext
     fun provideContext(): Context = context
 
 }

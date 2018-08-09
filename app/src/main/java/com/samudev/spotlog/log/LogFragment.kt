@@ -12,7 +12,6 @@ import android.view.*
 import android.widget.PopupMenu
 import com.samudev.spotlog.LoggerService
 import com.samudev.spotlog.R
-import com.samudev.spotlog.SpotLogApplication
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.viewmodels.SongLogViewModel
 import kotlinx.android.synthetic.main.log_fragment.*
@@ -107,7 +106,11 @@ class LogFragment : Fragment() {
         context?.startService(loggerServiceIntent)
     }
 
-    private fun initDagger() = SpotLogApplication.getAppComponent().injectLogFragment(this)
+    private fun initDagger() {
+        //SpotLogApplication.getAppComponent().injectLogFragment(this)
+        //LogFragmentComponent
+
+    }
 
     companion object {
         fun newInstance() = LogFragment()

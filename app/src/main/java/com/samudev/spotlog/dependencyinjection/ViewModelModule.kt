@@ -31,8 +31,10 @@ abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(SongLogViewModel::class)
+    @LogActivityScope
     abstract fun bindRepoViewModel(repoViewModel: SongLogViewModel): ViewModel
 
     @Binds
+    @LogActivityScope
     abstract fun bindViewModelFactory(factory: SongLogViewModelFactory): ViewModelProvider.Factory
 }
