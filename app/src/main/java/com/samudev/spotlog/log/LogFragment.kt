@@ -9,11 +9,11 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.*
 import android.widget.PopupMenu
-import android.widget.TextView
 import com.samudev.spotlog.LoggerService
 import com.samudev.spotlog.R
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.viewmodels.SongLogViewModel
+import kotlinx.android.synthetic.main.log_fragment.*
 
 /**
  * A fragment representing a list of Items.
@@ -26,7 +26,6 @@ class LogFragment : Fragment() {
 
     private val loggerServiceIntent by lazy { Intent(context, LoggerService::class.java) }
 
-    private lateinit var noHistoryTextView: TextView
 
     lateinit var viewModel: SongLogViewModel
 
@@ -53,7 +52,6 @@ class LogFragment : Fragment() {
             }
         }).attachToRecyclerView(recyclerView)
 
-        noHistoryTextView = rootView.findViewById(R.id.noHistoryTextView)
 
         setHasOptionsMenu(true)
         return rootView
@@ -98,7 +96,6 @@ class LogFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        // FIXME: this will also stop tileServie's logger
         context?.stopService(loggerServiceIntent)
     }
 

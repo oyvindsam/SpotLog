@@ -1,7 +1,7 @@
 package com.samudev.spotlog.dependencyinjection
 
-import android.service.quicksettings.TileService
 import com.samudev.spotlog.LoggerService
+import com.samudev.spotlog.SpotLogTileService
 import com.samudev.spotlog.viewmodels.SongLogViewModel
 import dagger.Component
 
@@ -11,5 +11,5 @@ interface SpotLogComponent {
 
     fun injectSongLogViewModel(viewModel: SongLogViewModel)
     fun injectLoggerService(service: LoggerService)
-    fun injectTileService(service: TileService)
+    fun injectTileService(service: SpotLogTileService)
 }
