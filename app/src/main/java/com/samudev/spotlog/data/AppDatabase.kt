@@ -2,17 +2,15 @@ package com.samudev.spotlog.data
 
 import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.Database
-import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.migration.Migration
-import android.content.Context
 
 @Database(entities = arrayOf(Song::class) , version = 2, exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun songDao(): SongDao
 
     companion object {
-
+/*
         // For Singleton instantiation
         @Volatile private var instance: AppDatabase? = null
 
@@ -25,7 +23,7 @@ abstract class AppDatabase : RoomDatabase() {
                         .also { instance = it }
             }
         }
-
+*/
         fun MIGRATION_1_2(): Migration {
             return object: Migration(1, 2) {
                 override fun migrate(database: SupportSQLiteDatabase) {

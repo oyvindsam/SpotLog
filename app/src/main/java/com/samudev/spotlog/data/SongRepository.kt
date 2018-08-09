@@ -46,17 +46,6 @@ class SongRepository @Inject constructor(val songDao: SongDao) {
     }
 
     fun clearSongs() = songDao.clearTable()
-
-    companion object {
-
-        // For Singleton instantiation
-        @Volatile private var instance: SongRepository? = null
-
-        fun getInstance(songDao: SongDao) =
-                instance ?: synchronized(this) {
-                    instance ?: SongRepository(songDao).also { instance = it }
-                }
-    }
 }
 
 fun SongDao.insertConditionally(song: Song, songs: List<Song>?, time: Long): Boolean {

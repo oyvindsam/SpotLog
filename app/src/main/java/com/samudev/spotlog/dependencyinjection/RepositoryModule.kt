@@ -1,20 +1,14 @@
 package com.samudev.spotlog.dependencyinjection
 
+import android.arch.persistence.room.Room
 import android.content.Context
 import com.samudev.spotlog.data.AppDatabase
 import com.samudev.spotlog.data.SongDao
-import com.samudev.spotlog.data.SongRepository
 import dagger.Module
 import dagger.Provides
 
-@Module(includes = [ContextModule::class, ViewModelModule::class])
+@Module(includes = [ContextModule::class])
 class RepositoryModule {
-
-    @Provides
-    @SpotLogScope
-    fun provideSongRepository(songDao: SongDao): SongRepository {
-        return SongRepository.getInstance(songDao)
-    }
 
     @Provides
     @SpotLogScope
@@ -22,6 +16,12 @@ class RepositoryModule {
 
     @Provides
     @SpotLogScope
-    fun provideAppDatabase(context: Context): AppDatabase = AppDatabase.getInstance(context)
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+        return Room
+                .databaseBuilder(context, AppDatabase::class.java, "song-history-db")
+                .addMigrations(AppDatabase.MIGRATION_1_2())
+                .allowMainThreadQueries()
+                .build()
+    }
 
 }
