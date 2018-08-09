@@ -1,6 +1,7 @@
 package com.samudev.spotlog.log
 
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
@@ -11,30 +12,32 @@ import android.view.*
 import android.widget.PopupMenu
 import com.samudev.spotlog.LoggerService
 import com.samudev.spotlog.R
+import com.samudev.spotlog.SpotLogApplication
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.viewmodels.SongLogViewModel
 import kotlinx.android.synthetic.main.log_fragment.*
+import javax.inject.Inject
 
-/**
- * A fragment representing a list of Items.
- * Activities containing this fragment MUST implement the
- * [LogAdapter.LogItemListener] interface.
- */
+
 class LogFragment : Fragment() {
 
     private val LOG_TAG: String = LogFragment::class.java.simpleName
 
     private val loggerServiceIntent by lazy { Intent(context, LoggerService::class.java) }
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     lateinit var viewModel: SongLogViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
+        initDagger()
+
         val rootView = inflater.inflate(R.layout.log_fragment, container, false)
 
-        viewModel = ViewModelProviders.of(this).get(SongLogViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(SongLogViewModel::class.java)
 
         val listAdapter = LogAdapter()
         subscribeUi(listAdapter)
@@ -104,8 +107,11 @@ class LogFragment : Fragment() {
         context?.startService(loggerServiceIntent)
     }
 
+    private fun initDagger() = SpotLogApplication.getAppComponent().injectLogFragment(this)
+
     companion object {
         fun newInstance() = LogFragment()
     }
+
 
 }

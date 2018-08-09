@@ -1,16 +1,16 @@
 package com.samudev.spotlog
 
 import android.app.Application
+import com.samudev.spotlog.dependencyinjection.AppComponent
 import com.samudev.spotlog.dependencyinjection.ContextModule
-import com.samudev.spotlog.dependencyinjection.DaggerSpotLogComponent
-import com.samudev.spotlog.dependencyinjection.SpotLogComponent
+import com.samudev.spotlog.dependencyinjection.DaggerAppComponent
 
 
 class SpotLogApplication : Application() {
 
     companion object {
 
-        private lateinit var appComponent: SpotLogComponent
+        private lateinit var appComponent: AppComponent
 
         fun getAppComponent() = appComponent
     }
@@ -21,7 +21,7 @@ class SpotLogApplication : Application() {
     }
 
     private fun initDagger() {
-        appComponent = DaggerSpotLogComponent.builder()
+        appComponent = DaggerAppComponent.builder()
                 .contextModule(ContextModule(this))
                 .build()
     }

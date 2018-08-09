@@ -7,7 +7,7 @@ import com.samudev.spotlog.data.SongRepository
 import dagger.Module
 import dagger.Provides
 
-@Module(includes = [ContextModule::class])
+@Module(includes = [ContextModule::class, ViewModelModule::class])
 class RepositoryModule {
 
     @Provides
