@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.samudev.spotlog.R
 import com.samudev.spotlog.databinding.LogActivityBinding
+import com.samudev.spotlog.preference.PrefsFragment
 
 class LogActivity : AppCompatActivity() {
 
@@ -18,11 +19,15 @@ class LogActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
+        /*
         val historyListFragment = supportFragmentManager.findFragmentById(R.id.contentFrame)
                 as LogFragment? ?: LogFragment.newInstance().also {
             supportFragmentManager.beginTransaction().add(R.id.contentFrame, it).commit()
-        }
+        }*/
 
+        supportFragmentManager.findFragmentById(R.id.contentFrame)
+                as PrefsFragment? ?: PrefsFragment.newInstance().also {
+            supportFragmentManager.beginTransaction().add(R.id.contentFrame, it).commit() }
     }
 
 }

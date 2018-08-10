@@ -2,6 +2,8 @@ package com.samudev.spotlog.dependencyinjection
 
 import android.arch.persistence.room.Room
 import android.content.Context
+import android.content.SharedPreferences
+import android.preference.PreferenceManager
 import com.samudev.spotlog.data.AppDatabase
 import com.samudev.spotlog.data.SongDao
 import dagger.Module
@@ -9,7 +11,7 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Module(includes = [ContextModule::class])
-class RepositoryModule {
+class AppModule {
 
     @Provides
     @Singleton
@@ -25,4 +27,7 @@ class RepositoryModule {
                 .build()
     }
 
+    @Provides
+    @Singleton
+    fun provideDefaultSharedPreferences(@ApplicationContext context: Context): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 }

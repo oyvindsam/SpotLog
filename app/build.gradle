@@ -49,6 +49,7 @@ dependencies {
     implementation "android.arch.persistence.room:runtime:$roomVersion"
     kapt "android.arch.persistence.room:compiler:$roomVersion"
     implementation "android.arch.lifecycle:extensions:$lifecycleVersion"
+    implementation "com.android.support:preference-v7:$supportLibraryVersion"
 
     implementation 'com.google.dagger:dagger:2.16'
     kapt 'com.google.dagger:dagger-compiler:2.16'

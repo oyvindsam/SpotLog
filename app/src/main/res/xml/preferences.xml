@@ -1,0 +1,14 @@
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="Preference Title">
+
+<!-- TODO: add custom numberpicker preference for selecting log-timeout -->
+
+    <SwitchPreference
+        android:key="preference_foreground"
+        android:title="Foreground service"
+        android:summaryOn="Foreground service is running"
+        android:summaryOff="Foreground service is off"
+        android:defaultValue="false" />
+
+</PreferenceScreen>
