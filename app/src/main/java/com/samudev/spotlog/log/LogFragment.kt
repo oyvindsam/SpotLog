@@ -12,6 +12,7 @@ import android.view.*
 import android.widget.PopupMenu
 import com.samudev.spotlog.LoggerService
 import com.samudev.spotlog.R
+import com.samudev.spotlog.SpotLogApplication
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.viewmodels.SongLogViewModel
 import kotlinx.android.synthetic.main.log_fragment.*
@@ -29,6 +30,9 @@ class LogFragment : Fragment() {
 
     lateinit var viewModel: SongLogViewModel
 
+    @Inject
+    lateinit var listAdapter: LogAdapter
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -38,7 +42,6 @@ class LogFragment : Fragment() {
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(SongLogViewModel::class.java)
 
-        val listAdapter = LogAdapter()
         subscribeUi(listAdapter)
 
         val recyclerView = rootView.findViewById<RecyclerView>(R.id.song_list)
@@ -107,9 +110,7 @@ class LogFragment : Fragment() {
     }
 
     private fun initDagger() {
-        //SpotLogApplication.getAppComponent().injectLogFragment(this)
-        //LogFragmentComponent
-
+        SpotLogApplication.getAppComponent().injectLogFragment(this)
     }
 
     companion object {

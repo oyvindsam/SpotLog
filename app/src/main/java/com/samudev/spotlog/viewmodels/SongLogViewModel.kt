@@ -4,6 +4,7 @@ import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
+import android.util.Log
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.data.SongRepository
 import com.samudev.spotlog.log.LogTimeFilter
@@ -18,6 +19,7 @@ class SongLogViewModel @Inject constructor(val songRepository: SongRepository) :
     private val songLog = MediatorLiveData<List<Song>>()
 
     init {
+        Log.d(LOG_TAG, "CREATED")
         logFilter.value = LogTimeFilter.ALL
 
         val filteredSongLog = Transformations.switchMap(logFilter) {

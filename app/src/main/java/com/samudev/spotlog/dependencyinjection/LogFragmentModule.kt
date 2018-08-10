@@ -1,13 +1,17 @@
 package com.samudev.spotlog.dependencyinjection
 
-import com.samudev.spotlog.log.LogFragment
+import com.samudev.spotlog.log.LogAdapter
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
+
 
 @Module(includes = [ViewModelModule::class])
-class LogFragmentModule(private val logFragment: LogFragment) {
+class LogFragmentModule {
+
 
     @Provides
-    @LogActivityScope
-    fun provideLogFragment(): LogFragment = logFragment
+    @Singleton
+    fun provideLogAdapter() = LogAdapter()
+
 }
