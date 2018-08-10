@@ -14,6 +14,7 @@ import com.samudev.spotlog.LoggerService
 import com.samudev.spotlog.R
 import com.samudev.spotlog.SpotLogApplication
 import com.samudev.spotlog.data.Song
+import com.samudev.spotlog.dependencyinjection.DaggerLogFragmentComponent
 import com.samudev.spotlog.viewmodels.SongLogViewModel
 import kotlinx.android.synthetic.main.log_fragment.*
 import javax.inject.Inject
@@ -110,7 +111,10 @@ class LogFragment : Fragment() {
     }
 
     private fun initDagger() {
-        SpotLogApplication.getAppComponent().injectLogFragment(this)
+        DaggerLogFragmentComponent.builder()
+                .appComponent(SpotLogApplication.getAppComponent())
+                .build()
+                .injectLogFragment(this)
     }
 
     companion object {
