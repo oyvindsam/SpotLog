@@ -43,4 +43,10 @@ class SongLogViewModel @Inject constructor(val songRepository: SongRepository) :
             else -> LogTimeFilter.ALL
         }
     }
+
+    override fun onCleared() {
+        Log.d(LOG_TAG, "OnCleared")
+
+        super.onCleared()
+    }
 }

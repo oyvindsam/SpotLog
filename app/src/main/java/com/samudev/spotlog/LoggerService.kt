@@ -4,7 +4,6 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import android.widget.Toast
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.data.SongRepository
 import com.samudev.spotlog.log.LogFragment
@@ -30,13 +29,13 @@ class LoggerService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         registerReceiver(spotifyReceiver, Spotify.SPOTIFY_INTENT_FILTER)
-        Toast.makeText(this, "LoggerService is on", Toast.LENGTH_SHORT).show()
+
         return START_STICKY
     }
 
     override fun onDestroy() {
         unregisterReceiver(spotifyReceiver)
-        Toast.makeText(this, "LoggerService is off", Toast.LENGTH_SHORT).show()
+        Log.d(LOG_TAG, "LoggerService destroyed, context: $this")
         super.onDestroy()
     }
 

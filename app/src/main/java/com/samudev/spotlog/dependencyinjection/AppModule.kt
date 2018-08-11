@@ -23,7 +23,6 @@ class AppModule {
         return Room
                 .databaseBuilder(context, AppDatabase::class.java, "song-history-db")
                 .addMigrations(AppDatabase.MIGRATION_1_2())
-                .allowMainThreadQueries()
                 .build()
     }
 
