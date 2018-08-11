@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
+    app:startDestination="@id/logFragment">
+
+    <fragment
+        android:id="@+id/logFragment"
+        android:name="com.samudev.spotlog.log.LogFragment"
+        android:label="SpotLog" >
+        <action
+            android:id="@+id/action_to_settings"
+            app:destination="@id/prefsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/prefsFragment"
+        android:name="com.samudev.spotlog.preference.PrefsFragment"
+        android:label="Settings" />
+</navigation>

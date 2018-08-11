@@ -51,6 +51,10 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:$lifecycleVersion"
     implementation "com.android.support:preference-v7:$supportLibraryVersion"
 
+    //Navigation
+    implementation "android.arch.navigation:navigation-fragment-ktx:$nav_version" // use -ktx for Kotlin
+    implementation "android.arch.navigation:navigation-ui-ktx:$nav_version" // use -ktx for Kotlin
+
     implementation 'com.google.dagger:dagger:2.16'
     kapt 'com.google.dagger:dagger-compiler:2.16'
     kapt 'com.google.dagger:dagger-android-processor:2.16'

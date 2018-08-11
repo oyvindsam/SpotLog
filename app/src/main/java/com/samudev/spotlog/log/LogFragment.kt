@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.*
 import android.widget.PopupMenu
+import androidx.navigation.fragment.findNavController
 import com.samudev.spotlog.LoggerService
 import com.samudev.spotlog.R
 import com.samudev.spotlog.SpotLogApplication
@@ -73,12 +74,13 @@ class LogFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.history_fragment_menu, menu)
+        inflater?.inflate(R.menu.log_fragment_menu, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_clear -> viewModel.clearSongs()
+            R.id.menu_settings -> findNavController().navigate(R.id.action_to_settings)
             R.id.menu_filter -> showFilteringPopUpMenu()
         }
         return true
