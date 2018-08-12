@@ -18,7 +18,7 @@ class Spotify {
             return object : BroadcastReceiver() {
                 override fun onReceive(context: Context?, intent: Intent?) {
                     if (intent?.action == SPOTIFY_PLAYBACK_STATE_CHANGED) {
-                        Log.d("--------------", " : " + intent.getLongExtra("timeSent", 0L))
+                        Log.d("Spotify_Receiver", " : " + intent.getLongExtra("timeSent", 0L))
                         val song = Song(
                                 intent.getStringExtra("id"),
                                 intent.getStringExtra("artist"),

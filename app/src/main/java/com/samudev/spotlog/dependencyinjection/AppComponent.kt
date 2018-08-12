@@ -1,9 +1,10 @@
 package com.samudev.spotlog.dependencyinjection
 
-import com.samudev.spotlog.LoggerService
-import com.samudev.spotlog.SpotLogTileService
+import android.content.SharedPreferences
 import com.samudev.spotlog.data.SongRepository
 import com.samudev.spotlog.preference.PrefsFragment
+import com.samudev.spotlog.service.LoggerService
+import com.samudev.spotlog.service.SpotLogTileService
 import dagger.Component
 import javax.inject.Singleton
 
@@ -13,6 +14,7 @@ interface AppComponent {
 
     // Subcomponents
     fun songRepository(): SongRepository
+    fun sharedPreferences(): SharedPreferences
 
     fun injectPrefsFragment(fragment: PrefsFragment)
     fun injectLoggerService(service: LoggerService)

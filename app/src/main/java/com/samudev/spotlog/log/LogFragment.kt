@@ -4,6 +4,8 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
@@ -11,11 +13,11 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.*
 import android.widget.PopupMenu
 import androidx.navigation.fragment.findNavController
-import com.samudev.spotlog.LoggerService
 import com.samudev.spotlog.R
 import com.samudev.spotlog.SpotLogApplication
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.dependencyinjection.DaggerLogFragmentComponent
+import com.samudev.spotlog.service.LoggerService
 import com.samudev.spotlog.viewmodels.SongLogViewModel
 import kotlinx.android.synthetic.main.log_fragment.*
 import javax.inject.Inject
@@ -25,7 +27,7 @@ class LogFragment : Fragment() {
 
     private val LOG_TAG: String = LogFragment::class.java.simpleName
 
-    private val loggerServiceIntent by lazy { Intent(context, LoggerService::class.java) }
+    private val loggerServiceIntent by lazy { Intent(LoggerService.ACTION_START_BACKGROUND, Uri.EMPTY, context, LoggerService::class.java) }
 
 
     @Inject
@@ -35,6 +37,10 @@ class LogFragment : Fragment() {
 
     @Inject
     lateinit var listAdapter: LogAdapter
+
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -106,6 +112,12 @@ class LogFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         context?.startService(loggerServiceIntent)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        context?.stopService(loggerServiceIntent)
+        if (sharedPreferences.getBoolean("preference_foreground", false)) context?.startService(loggerServiceIntent.apply { this.action = LoggerService.ACTION_START_FOREGROUND })
     }
 
     private fun initDagger() {

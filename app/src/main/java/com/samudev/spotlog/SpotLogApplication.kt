@@ -4,6 +4,7 @@ import android.app.Application
 import com.samudev.spotlog.dependencyinjection.AppComponent
 import com.samudev.spotlog.dependencyinjection.ContextModule
 import com.samudev.spotlog.dependencyinjection.DaggerAppComponent
+import com.samudev.spotlog.service.LoggerService
 
 
 class SpotLogApplication : Application() {
@@ -18,6 +19,7 @@ class SpotLogApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         initDagger()
+        LoggerService.createNotificationChannel(this)
     }
 
     private fun initDagger() {

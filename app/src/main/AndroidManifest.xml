@@ -27,7 +27,7 @@
         </activity>
 
         <service
-            android:name=".SpotLogTileService"
+            android:name=".service.SpotLogTileService"
             android:icon="@drawable/ic_tile_log_track"
             android:label="@string/tile_spotlog"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
@@ -37,7 +37,7 @@
         </service>
 
         <service
-            android:name=".LoggerService"
+            android:name=".service.LoggerService"
             android:enabled="true"
             android:permission="android.permission.FOREGROUND_SERVICE"/>
 
