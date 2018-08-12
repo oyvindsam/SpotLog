@@ -22,6 +22,8 @@ class SongLogViewModel @Inject constructor(val songRepository: SongRepository) :
         Log.d(LOG_TAG, "CREATED")
         logFilter.value = LogTimeFilter.ALL
 
+        // Kinda obsolete, as the datasource never changes, only new values are added.
+        // A more sane way to do this is to always call getSongLatest and implicitly filter based on logFilter value..
         val filteredSongLog = Transformations.switchMap(logFilter) {
             if (it == LogTimeFilter.ALL) songRepository.getSongsAll()
             else songRepository.getSongsLatest(it)

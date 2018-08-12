@@ -27,6 +27,7 @@ class LogFragment : Fragment() {
 
     private val loggerServiceIntent by lazy { Intent(context, LoggerService::class.java) }
 
+
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
@@ -100,11 +101,6 @@ class LogFragment : Fragment() {
             }
             show()
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        context?.stopService(loggerServiceIntent)
     }
 
     override fun onResume() {

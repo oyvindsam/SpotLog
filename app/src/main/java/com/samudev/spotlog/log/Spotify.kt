@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.util.Log
 import com.samudev.spotlog.data.Song
 
 
@@ -17,6 +18,7 @@ class Spotify {
             return object : BroadcastReceiver() {
                 override fun onReceive(context: Context?, intent: Intent?) {
                     if (intent?.action == SPOTIFY_PLAYBACK_STATE_CHANGED) {
+                        Log.d("--------------", " : " + intent.getLongExtra("timeSent", 0L))
                         val song = Song(
                                 intent.getStringExtra("id"),
                                 intent.getStringExtra("artist"),
