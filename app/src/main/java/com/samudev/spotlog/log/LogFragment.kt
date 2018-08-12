@@ -18,7 +18,6 @@ import com.samudev.spotlog.SpotLogApplication
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.dependencyinjection.DaggerLogFragmentComponent
 import com.samudev.spotlog.service.LoggerService
-import com.samudev.spotlog.viewmodels.SongLogViewModel
 import kotlinx.android.synthetic.main.log_fragment.*
 import javax.inject.Inject
 

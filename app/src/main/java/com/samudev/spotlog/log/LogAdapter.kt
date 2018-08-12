@@ -27,7 +27,7 @@ class LogAdapter
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val song = getItem(position)
         holder.apply {
-            bind(View.OnClickListener { v ->
+            bind(View.OnClickListener { _ ->
                 Log.d("Adapter", "${song.track} clicked!") },
                     song)
             itemView.tag = song

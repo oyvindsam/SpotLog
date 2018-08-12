@@ -10,7 +10,7 @@ import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
-@Module(includes = [ContextModule::class])
+@Module(includes = [ContextModule::class, ViewModelModule::class])
 class AppModule {
 
     @Provides

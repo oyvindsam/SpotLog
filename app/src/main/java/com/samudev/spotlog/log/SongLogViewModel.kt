@@ -1,4 +1,4 @@
-package com.samudev.spotlog.viewmodels
+package com.samudev.spotlog.log
 
 import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.MutableLiveData
@@ -7,7 +7,6 @@ import android.arch.lifecycle.ViewModel
 import android.util.Log
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.data.SongRepository
-import com.samudev.spotlog.log.LogTimeFilter
 import javax.inject.Inject
 
 

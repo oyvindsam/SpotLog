@@ -2,12 +2,12 @@ package com.samudev.spotlog.viewmodels
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import com.samudev.spotlog.dependencyinjection.LogActivityScope
 import javax.inject.Inject
 import javax.inject.Provider
+import javax.inject.Singleton
 
 // Copied straight from google's android-architecture-components
-@LogActivityScope
+@Singleton
 class SongLogViewModelFactory @Inject constructor(
         private val creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>
 ) : ViewModelProvider.Factory {

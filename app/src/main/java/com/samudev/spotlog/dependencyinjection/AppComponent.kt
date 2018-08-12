@@ -1,5 +1,6 @@
 package com.samudev.spotlog.dependencyinjection
 
+import android.arch.lifecycle.ViewModelProvider
 import android.content.SharedPreferences
 import com.samudev.spotlog.data.SongRepository
 import com.samudev.spotlog.preference.PrefsFragment
@@ -15,6 +16,7 @@ interface AppComponent {
     // Subcomponents
     fun songRepository(): SongRepository
     fun sharedPreferences(): SharedPreferences
+    fun viewModelFactory(): ViewModelProvider.Factory
 
     fun injectPrefsFragment(fragment: PrefsFragment)
     fun injectLoggerService(service: LoggerService)

@@ -18,11 +18,12 @@ package com.samudev.spotlog.dependencyinjection
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import com.samudev.spotlog.viewmodels.SongLogViewModel
+import com.samudev.spotlog.log.SongLogViewModel
 import com.samudev.spotlog.viewmodels.SongLogViewModelFactory
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
+import javax.inject.Singleton
 
 @Suppress("unused")
 @Module
@@ -30,9 +31,11 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
+    @Singleton
     @ViewModelKey(SongLogViewModel::class)
-    abstract fun bindRepoViewModel(repoViewModel: SongLogViewModel): ViewModel
+    abstract fun bindLogViewModel(logViewModel: SongLogViewModel): ViewModel
 
     @Binds
+    @Singleton
     abstract fun bindViewModelFactory(factory: SongLogViewModelFactory): ViewModelProvider.Factory
 }
