@@ -27,7 +27,9 @@ class LogFragment : Fragment() {
 
     private val LOG_TAG: String = LogFragment::class.java.simpleName
 
-    private val loggerServiceIntent by lazy { Intent(LoggerService.ACTION_START_BACKGROUND, Uri.EMPTY, context, LoggerService::class.java) }
+    // starts same service, just different action
+    private val loggerServiceIntentBackground by lazy { Intent(LoggerService.ACTION_START_BACKGROUND, Uri.EMPTY, context, LoggerService::class.java) }
+    private val loggerServiceIntentForeground by lazy { Intent(LoggerService.ACTION_START_FOREGROUND, Uri.EMPTY, context, LoggerService::class.java) }
 
 
     @Inject
@@ -111,13 +113,17 @@ class LogFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        context?.startService(loggerServiceIntent)
+        context?.startService(loggerServiceIntentBackground)
     }
 
     override fun onPause() {
         super.onPause()
-        context?.stopService(loggerServiceIntent)
-        if (sharedPreferences.getBoolean("preference_foreground", false)) context?.startService(loggerServiceIntent.apply { this.action = LoggerService.ACTION_START_FOREGROUND })
+        // Stop backgroundservice in fragment
+        context?.stopService(loggerServiceIntentBackground)
+
+        // if foregroundservice is turned ON.. turn it on
+        if (sharedPreferences.getBoolean("preference_foreground", false)) context?.startService(loggerServiceIntentForeground)
+        else context?.stopService(loggerServiceIntentForeground)
     }
 
     private fun initDagger() {
