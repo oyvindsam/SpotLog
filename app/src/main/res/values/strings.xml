@@ -14,4 +14,10 @@
     <string name="menu_clear">Clear history</string>
     <string name="menu_settings">Settings</string>
     <string name="tile_spotlog">Log track</string>
+
+    <!-- Preferences -->
+    <string name="pref_foreground_key">foreground_key</string>
+    <string name="pref_foreground_title">Foreground service</string>
+    <string name="pref_foreground_summary_on">Foreground service is running</string>
+    <string name="pref_foreground_summary_off">Foreground service is off</string>
 </resources>

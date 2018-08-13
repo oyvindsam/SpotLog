@@ -31,7 +31,8 @@ class LoggerService : Service() {
 
     // Foreground service stuff
     private val clickIntent by lazy { Intent(this, LogActivity::class.java).apply {
-        flags = Intent.FLAG_ACTIVITY_CLEAR_TASK } }
+        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP} }
+
     private val pendingIntent by lazy { PendingIntent.getActivity(this, 0, clickIntent, 0) }
     private val notification by lazy {
         Notification.Builder(this, LoggerService.DEFAULT_CHANNEL)  // Default channel needs to be set up before adding notification

@@ -16,6 +16,7 @@ class LogActivity : AppCompatActivity() {
         private val LOG_TAG: String = LogActivity::class.java.simpleName
     }
 
+    // TODO: logging service should probably always be active when the app is open
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(LOG_TAG, "Activity created, context: $this")

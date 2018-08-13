@@ -120,9 +120,8 @@ class LogFragment : Fragment() {
         super.onPause()
         // Stop backgroundservice in fragment
         context?.stopService(loggerServiceIntentBackground)
-
         // if foregroundservice is turned ON.. turn it on
-        if (sharedPreferences.getBoolean("preference_foreground", false)) context?.startService(loggerServiceIntentForeground)
+        if (sharedPreferences.getBoolean(getString(R.string.pref_foreground_key), false)) context?.startService(loggerServiceIntentForeground)
         else context?.stopService(loggerServiceIntentForeground)
     }
 
