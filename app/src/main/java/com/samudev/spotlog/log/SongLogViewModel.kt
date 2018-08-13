@@ -1,9 +1,6 @@
 package com.samudev.spotlog.log
 
-import android.arch.lifecycle.MediatorLiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Transformations
-import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.*
 import android.util.Log
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.data.SongRepository
@@ -15,7 +12,7 @@ class SongLogViewModel @Inject constructor(val songRepository: SongRepository) :
     private val LOG_TAG: String = SongLogViewModel::class.java.simpleName
 
     private val logFilter = MutableLiveData<Long>()
-    private val songLog = MediatorLiveData<List<Song>>()
+    private val _songLog = MediatorLiveData<List<Song>>()
 
     init {
         Log.d(LOG_TAG, "CREATED")
@@ -27,10 +24,11 @@ class SongLogViewModel @Inject constructor(val songRepository: SongRepository) :
             if (it == LogTimeFilter.ALL) songRepository.getSongsAll()
             else songRepository.getSongsLatest(it)
         }
-        songLog.addSource(filteredSongLog, songLog::setValue)
+        _songLog.addSource(filteredSongLog, _songLog::setValue)
     }
 
-    fun getSongs() = songLog
+    val songLog: LiveData<List<Song>>
+        get() = _songLog
 
     fun removeSong(song: Song) = songRepository.removeSong(song)
 

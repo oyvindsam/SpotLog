@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.content.SharedPreferences
+import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -16,8 +17,10 @@ import androidx.navigation.fragment.findNavController
 import com.samudev.spotlog.R
 import com.samudev.spotlog.SpotLogApplication
 import com.samudev.spotlog.data.Song
+import com.samudev.spotlog.databinding.LogFragmentBinding
 import com.samudev.spotlog.dependencyinjection.DaggerLogFragmentComponent
 import com.samudev.spotlog.service.LoggerService
+import com.samudev.spotlog.utilities.autoCleared
 import kotlinx.android.synthetic.main.log_fragment.*
 import javax.inject.Inject
 
@@ -36,26 +39,27 @@ class LogFragment : Fragment() {
 
     lateinit var viewModel: SongLogViewModel
 
-    @Inject
-    lateinit var listAdapter: LogAdapter
-
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
+    var binding by autoCleared<LogFragmentBinding>()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
+        val databinding = DataBindingUtil.inflate<LogFragmentBinding>(inflater, R.layout.log_fragment, container, false)
+        binding = databinding
+
+        setHasOptionsMenu(true)
+        return binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         initDagger()
-
-        val rootView = inflater.inflate(R.layout.log_fragment, container, false)
-
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(SongLogViewModel::class.java)
 
-        subscribeUi(listAdapter)
-
-        val recyclerView = rootView.findViewById<RecyclerView>(R.id.song_list)
-        recyclerView.adapter = listAdapter
 
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
@@ -65,18 +69,15 @@ class LogFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, position: Int) {
                 viewModel.removeSong(viewHolder.itemView.tag as Song)
             }
-        }).attachToRecyclerView(recyclerView)
+        }).attachToRecyclerView(binding.songList)
 
-
-        setHasOptionsMenu(true)
-        return rootView
-    }
-
-    private fun subscribeUi(adapter: LogAdapter) {
-        viewModel.getSongs().observe(viewLifecycleOwner, Observer { songs ->
+        val adapter = LogAdapter() // Not injected by dagger yet since the adapter needs to be refactored
+        binding.songList.adapter = adapter
+        // Init list
+        viewModel.songLog.observe(viewLifecycleOwner, Observer { songs ->
             if (songs != null) {
                 adapter.submitList(songs)
-                noHistoryTextView.visibility = if (songs.isEmpty()) View.VISIBLE else View.GONE
+                noHistoryTextView.visibility = if (songs.isEmpty()) View.VISIBLE else View.GONE // TODO: textview should observe a mutablelivedata in viewmodel
             }
         })
     }
@@ -131,10 +132,5 @@ class LogFragment : Fragment() {
                 .build()
                 .injectLogFragment(this)
     }
-
-    companion object {
-        fun newInstance() = LogFragment()
-    }
-
 
 }
