@@ -3,6 +3,7 @@ package com.samudev.spotlog.service
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
@@ -31,20 +32,22 @@ class LoggerService : Service() {
 
     private val spotifyReceiver = Spotify.spotifyReceiver(::log)
 
-    // Foreground service stuff
-    private val clickIntent by lazy { Intent(this, LogActivity::class.java).apply {
+    private lateinit var sharedPrefs: SharedPreferences
+
+    //
+    private val notifTapIntent by lazy { Intent(this, LogActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_CLEAR_TOP} }
-    private val serviceIntent by lazy { Intent(this, LoggerService::class.java).apply {
+    private val notifStopIntent by lazy { Intent(this, LoggerService::class.java).apply {
         action = LoggerService.ACTION_STOP
     } }
 
-    private val pendingIntent by lazy { PendingIntent.getActivity(this, 0, clickIntent, 0) }
-    private val pendingIntentStop by lazy { PendingIntent.getService(this, 0, serviceIntent, 0) }
+    private val notifPendingIntent by lazy { PendingIntent.getActivity(this, 0, notifTapIntent, 0) }
+    private val notifPendingStop by lazy { PendingIntent.getService(this, 0, notifStopIntent, 0) }
     private val action by lazy {
         NotificationCompat.Action.Builder(
                 R.drawable.ic_filter_list,
-                "Stop",
-                pendingIntentStop)
+                getString(R.string.notif_action_title),
+                notifPendingStop)
                 .build()
     }
 
@@ -53,45 +56,57 @@ class LoggerService : Service() {
                 .setSmallIcon(R.drawable.ic_tile_log_track)
                 .setContentTitle(getString(R.string.notif_content_title))
                 .setContentText(getString(R.string.notif_content_text))
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
+                .setContentIntent(notifPendingIntent)
+                //.setAutoCancel(true)
                 .addAction(action)
     }
 
     @Inject
     lateinit var repository: SongRepository
 
+    private var notificationIsActive = false
+    private var lastSong: Song? = null
+
     init {
         SpotLogApplication.getAppComponent().injectLoggerService(this)
     }
 
-    private fun log(song: Song) {
-        Log.d(LOG_TAG, "log called in LoggerService, context: $this songRegistered: ${song.registeredTime}")
-        repository.logSong(song, ::notifySongLogged)
-    }
-
-    private fun notifySongLogged(song: Song) {
-        notification.setContentText("${song.track} - ${song.artist}")
-        NotificationManagerCompat.from(this).notify(LoggerService.NOTIFICATION_ID, notification.build())
-    }
-
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("onStartCommand--------", "Intent action: ${intent?.action}, $flags, $startId")
         when(intent?.action) {
-            LoggerService.ACTION_STOP -> stopSelf()
+            LoggerService.ACTION_STOP -> { stopSelf(); notificationIsActive = false; }
             LoggerService.ACTION_START_FOREGROUND -> startService(true)
             LoggerService.ACTION_START_BACKGROUND -> startService(false)
-
         }
         return START_STICKY
     }
 
+    // start backgroundReceiver. Start foreground service if specified
     private fun startService(foreground: Boolean) {
-        registerReceiver(spotifyReceiver, Spotify.SPOTIFY_INTENT_FILTER)
-        if (foreground) startForeground(LoggerService.NOTIFICATION_ID, notification.build())
-        else stopForeground(true)
+        registerReceiver(spotifyReceiver, Spotify.SPOTIFY_INTENT_FILTER)  // start backgroundReceiver for picking up Spotify intents
+        if (foreground) startForegroundNotif()
+        else stopForeground(true)  // remove notification
+        notificationIsActive = foreground
+    }
 
+    // start foreground service and check for latest logged song to put in notification content text.
+    private fun startForegroundNotif() {
+        notificationIsActive = true
+        startForeground(LoggerService.NOTIFICATION_ID, notification.build())
+        repository.getLastLoggedSong(::notifySongLogged)
+    }
+
+    private fun log(song: Song) {
+        lastSong = song
+        Log.d(LOG_TAG, "Log called, context: $this songRegistered: ${song.track} ${song.registeredTime}")
+        repository.logSong(song, ::notifySongLogged)
+        // TODO: show all songs picked up or only those (conditionally) saved to db?
+        //if (lastSong != song) notifySongLogged(song)
+    }
+
+    private fun notifySongLogged(song: Song?) {
+        if (!notificationIsActive || song == null) return  // chekc if notification is currently active
+        notification.setContentText("${song.track} - ${song.artist}")
+        NotificationManagerCompat.from(this).notify(LoggerService.NOTIFICATION_ID, notification.build())
     }
 
     override fun onDestroy() {
@@ -114,7 +129,11 @@ class LoggerService : Service() {
         const val NOTIFICATION_ID = 3245
 
 
-        // Needs only to be called once
+        fun getNotification(context: Context) {
+
+        }
+
+        // Needs only to be called once (application startup)
         fun createNotificationChannel(context: Context) {
             val channel = NotificationChannel(
                     LoggerService.DEFAULT_CHANNEL,
