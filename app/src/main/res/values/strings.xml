@@ -21,6 +21,7 @@
     <string name="notif_action_title">Stop</string>
     <string name="notif_content_title">Spotlog</string>
     <string name="notif_content_text">Logging Spotify songs…</string>
+    <string name="notif_content_text_last">Last song logged:</string>
 
     <!-- Preferences -->
     <string name="pref_foreground_key">foreground_key</string>

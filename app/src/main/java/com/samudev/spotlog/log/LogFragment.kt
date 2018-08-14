@@ -36,9 +36,7 @@ class LogFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-
     lateinit var viewModel: SongLogViewModel
-
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
@@ -56,16 +54,15 @@ class LogFragment : Fragment() {
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+
         super.onActivityCreated(savedInstanceState)
         initDagger()
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(SongLogViewModel::class.java)
-
 
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
                 return true
             }
-
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, position: Int) {
                 viewModel.removeSong(viewHolder.itemView.tag as Song)
             }

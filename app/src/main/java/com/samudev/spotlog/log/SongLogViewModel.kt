@@ -43,6 +43,7 @@ class SongLogViewModel @Inject constructor(val songRepository: SongRepository) :
         }
     }
 
+
     override fun onCleared() {
         Log.d(LOG_TAG, "OnCleared, Context: $this")
 

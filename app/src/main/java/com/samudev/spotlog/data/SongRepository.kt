@@ -18,11 +18,12 @@ class SongRepository @Inject constructor(val songDao: SongDao) {
     fun getSongsAll(): LiveData<List<Song>> =  songDao.getAll()
 
     // log song if it is not recently logged
-    fun logSong(song: Song) {
+    fun logSong(song: Song, callback: ((Song) -> Unit)) {
         runOnIoThread {
             if (!songDao.getLatestNoLiveData(LogTimeFilter.FIFTEEN_MINUTES)
                             .any { s -> s.trackId == song.trackId }) {
                 songDao.insertSong(song)
+                callback(song)
             }
         }
     }

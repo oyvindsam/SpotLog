@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationManagerCompat
 import android.util.Log
 import com.samudev.spotlog.R
 import com.samudev.spotlog.SpotLogApplication
@@ -34,7 +35,7 @@ class LoggerService : Service() {
     private val clickIntent by lazy { Intent(this, LogActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_CLEAR_TOP} }
     private val serviceIntent by lazy { Intent(this, LoggerService::class.java).apply {
-        action = "STOP_SERVICE"
+        action = LoggerService.ACTION_STOP
     } }
 
     private val pendingIntent by lazy { PendingIntent.getActivity(this, 0, clickIntent, 0) }
@@ -55,7 +56,6 @@ class LoggerService : Service() {
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .addAction(action)
-                .build()
     }
 
     @Inject
@@ -66,10 +66,15 @@ class LoggerService : Service() {
     }
 
     private fun log(song: Song) {
-        // TODO: show last logged song in notification
         Log.d(LOG_TAG, "log called in LoggerService, context: $this songRegistered: ${song.registeredTime}")
-        repository.logSong(song)
+        repository.logSong(song, ::notifySongLogged)
     }
+
+    private fun notifySongLogged(song: Song) {
+        notification.setContentText("${song.track} - ${song.artist}")
+        NotificationManagerCompat.from(this).notify(LoggerService.NOTIFICATION_ID, notification.build())
+    }
+
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("onStartCommand--------", "Intent action: ${intent?.action}, $flags, $startId")
@@ -84,7 +89,7 @@ class LoggerService : Service() {
 
     private fun startService(foreground: Boolean) {
         registerReceiver(spotifyReceiver, Spotify.SPOTIFY_INTENT_FILTER)
-        if (foreground) startForeground(1, notification)
+        if (foreground) startForeground(LoggerService.NOTIFICATION_ID, notification.build())
         else stopForeground(true)
 
     }
@@ -106,7 +111,7 @@ class LoggerService : Service() {
         const val ACTION_START_BACKGROUND = "START_BACKGROUND"
         const val ACTION_STOP = "STOP_SERVICE"
         const val DEFAULT_CHANNEL = "SPOTLOG_DEFAULT_CHANNEL"
-        const val CHANNEL_NAME_LOGGER = ""
+        const val NOTIFICATION_ID = 3245
 
 
         // Needs only to be called once
@@ -115,8 +120,8 @@ class LoggerService : Service() {
                     LoggerService.DEFAULT_CHANNEL,
                     context.getString(R.string.notif_channel_name),
                     NotificationManager.IMPORTANCE_LOW).apply {
-                        lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-                        description = context.getString(R.string.notif_channel_description)
+                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+                description = context.getString(R.string.notif_channel_description)
             }
             val service = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             service.createNotificationChannel(channel)
