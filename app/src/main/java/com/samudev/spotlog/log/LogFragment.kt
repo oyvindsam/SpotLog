@@ -1,10 +1,12 @@
 package com.samudev.spotlog.log
 
+import android.app.AlertDialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
@@ -77,6 +79,52 @@ class LogFragment : Fragment() {
                 noHistoryTextView.visibility = if (songs.isEmpty()) View.VISIBLE else View.GONE // TODO: textview should observe a mutablelivedata in viewmodel
             }
         })
+
+        if (sharedPreferences.getBoolean("FIRST_LAUNCH", true)) showEnableBroadcastDialog()
+    }
+
+    private fun showEnableBroadcastDialog() {
+        if (isPackageInstalled(Spotify.PACKAGE_NAME, context?.packageManager)) {
+            sharedPreferences.applyPref(Pair("FIRST_LAUNCH", false))
+                    AlertDialog.Builder(context)
+                            .setTitle(getString(R.string.dialog_broadcast_title))
+                            .setMessage(getString(R.string.dialog_broadcast_message))
+                            .setPositiveButton(getString(R.string.dialog_broadcast_positive)) { dialog, key ->
+                                startActivity(context?.packageManager?.getLaunchIntentForPackage("com.spotify.music"))
+                            }
+                            .setNegativeButton(getString(R.string.dialog_broadcast_negative)) { dialog, key ->
+                                dialog.cancel()
+                            }
+                            .show()
+                }
+        else {
+            AlertDialog.Builder(context)
+                    .setTitle(getString(R.string.dialog_package_title))
+                    .setMessage(getString(R.string.dialog_package_message))
+                    .setNegativeButton(getString(R.string.dialog_package_negative)) { dialog, key ->
+                        dialog.cancel()
+                        activity?.finish()
+                    }
+                    .show()
+        }
+    }
+
+    private fun isPackageInstalled(packagename: String, packageManager: PackageManager?): Boolean {
+        if (packageManager == null) return false
+        try {
+            packageManager.getPackageInfo(packagename, 0)
+        } catch (e: PackageManager.NameNotFoundException) {
+            return false
+        }
+        return true
+    }
+
+    fun SharedPreferences.applyPref(pref: Pair<String, Any>) {
+        val editor = this.edit()
+        when(pref.second) {
+            is Boolean -> editor.putBoolean(pref.first, pref.second as Boolean)
+        }
+        editor.apply()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

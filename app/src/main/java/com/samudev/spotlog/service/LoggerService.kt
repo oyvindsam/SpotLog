@@ -3,7 +3,6 @@ package com.samudev.spotlog.service
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
@@ -32,9 +31,6 @@ class LoggerService : Service() {
 
     private val spotifyReceiver = Spotify.spotifyReceiver(::log)
 
-    private lateinit var sharedPrefs: SharedPreferences
-
-    //
     private val notifTapIntent by lazy { Intent(this, LogActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_CLEAR_TOP} }
     private val notifStopIntent by lazy { Intent(this, LoggerService::class.java).apply {
@@ -43,7 +39,7 @@ class LoggerService : Service() {
 
     private val notifPendingIntent by lazy { PendingIntent.getActivity(this, 0, notifTapIntent, 0) }
     private val notifPendingStop by lazy { PendingIntent.getService(this, 0, notifStopIntent, 0) }
-    private val action by lazy {
+    private val notifActionStop by lazy {
         NotificationCompat.Action.Builder(
                 R.drawable.ic_filter_list,
                 getString(R.string.notif_action_title),
@@ -57,8 +53,7 @@ class LoggerService : Service() {
                 .setContentTitle(getString(R.string.notif_content_title))
                 .setContentText(getString(R.string.notif_content_text))
                 .setContentIntent(notifPendingIntent)
-                //.setAutoCancel(true)
-                .addAction(action)
+                .addAction(notifActionStop)
     }
 
     @Inject
@@ -82,7 +77,7 @@ class LoggerService : Service() {
 
     // start backgroundReceiver. Start foreground service if specified
     private fun startService(foreground: Boolean) {
-        registerReceiver(spotifyReceiver, Spotify.SPOTIFY_INTENT_FILTER)  // start backgroundReceiver for picking up Spotify intents
+        registerReceiver(spotifyReceiver, Spotify.INTENT_FILTER)  // start backgroundReceiver for picking up Spotify intents
         if (foreground) startForegroundNotif()
         else stopForeground(true)  // remove notification
         notificationIsActive = foreground

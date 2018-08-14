@@ -23,7 +23,7 @@ class SpotLogTileService : TileService() {
     }
 
     override fun onClick() {
-        this.registerReceiver(spotifyReceiver, Spotify.SPOTIFY_INTENT_FILTER)
+        this.registerReceiver(spotifyReceiver, Spotify.INTENT_FILTER)
         super.onClick()
     }
 
