@@ -15,6 +15,13 @@
     <string name="menu_settings">Settings</string>
     <string name="tile_spotlog">Log track</string>
 
+    <!-- Notification -->
+    <string name="notif_channel_name">Foreground service logger</string>
+    <string name="notif_channel_description">This is the visible notification when foreground-loggin is turned on.</string>
+    <string name="notif_action_title">Stop</string>
+    <string name="notif_content_title">Spotlog</string>
+    <string name="notif_content_text">Logging Spotify songs…</string>
+
     <!-- Preferences -->
     <string name="pref_foreground_key">foreground_key</string>
     <string name="pref_foreground_title">Foreground service</string>

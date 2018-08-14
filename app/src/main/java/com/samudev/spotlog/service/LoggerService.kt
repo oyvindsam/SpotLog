@@ -4,6 +4,7 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.IBinder
+import android.support.v4.app.NotificationCompat
 import android.util.Log
 import com.samudev.spotlog.R
 import com.samudev.spotlog.SpotLogApplication
@@ -32,15 +33,28 @@ class LoggerService : Service() {
     // Foreground service stuff
     private val clickIntent by lazy { Intent(this, LogActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_CLEAR_TOP} }
+    private val serviceIntent by lazy { Intent(this, LoggerService::class.java).apply {
+        action = "STOP_SERVICE"
+    } }
 
     private val pendingIntent by lazy { PendingIntent.getActivity(this, 0, clickIntent, 0) }
+    private val pendingIntentStop by lazy { PendingIntent.getService(this, 0, serviceIntent, 0) }
+    private val action by lazy {
+        NotificationCompat.Action.Builder(
+                R.drawable.ic_filter_list,
+                "Stop",
+                pendingIntentStop)
+                .build()
+    }
+
     private val notification by lazy {
-        Notification.Builder(this, LoggerService.DEFAULT_CHANNEL)  // Default channel needs to be set up before adding notification
+        NotificationCompat.Builder(this, LoggerService.DEFAULT_CHANNEL)  // Default channel needs to be set up before adding notification
                 .setSmallIcon(R.drawable.ic_tile_log_track)
-                .setContentTitle("SpotLog")
-                .setContentText("Logging Spotify songs...")
+                .setContentTitle(getString(R.string.notif_content_title))
+                .setContentText(getString(R.string.notif_content_text))
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
+                .addAction(action)
                 .build()
     }
 
@@ -59,12 +73,20 @@ class LoggerService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("onStartCommand--------", "Intent action: ${intent?.action}, $flags, $startId")
-        registerReceiver(spotifyReceiver, Spotify.SPOTIFY_INTENT_FILTER)
+        when(intent?.action) {
+            LoggerService.ACTION_STOP -> stopSelf()
+            LoggerService.ACTION_START_FOREGROUND -> startService(true)
+            LoggerService.ACTION_START_BACKGROUND -> startService(false)
 
-        if (intent?.action == LoggerService.ACTION_START_FOREGROUND) startForeground(1, notification)
+        }
+        return START_STICKY
+    }
+
+    private fun startService(foreground: Boolean) {
+        registerReceiver(spotifyReceiver, Spotify.SPOTIFY_INTENT_FILTER)
+        if (foreground) startForeground(1, notification)
         else stopForeground(true)
 
-        return START_STICKY
     }
 
     override fun onDestroy() {
@@ -82,15 +104,19 @@ class LoggerService : Service() {
     companion object {
         const val ACTION_START_FOREGROUND = "START_FOREGROUND"
         const val ACTION_START_BACKGROUND = "START_BACKGROUND"
+        const val ACTION_STOP = "STOP_SERVICE"
         const val DEFAULT_CHANNEL = "SPOTLOG_DEFAULT_CHANNEL"
-        const val CHANNEL_NAME_LOGGER = "Foreground service logger"
+        const val CHANNEL_NAME_LOGGER = ""
 
 
         // Needs only to be called once
         fun createNotificationChannel(context: Context) {
-            val channel = NotificationChannel(DEFAULT_CHANNEL, CHANNEL_NAME_LOGGER, NotificationManager.IMPORTANCE_LOW).apply {
-                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-                description = "This is the visible notification when foreground-loggin is turned on."
+            val channel = NotificationChannel(
+                    LoggerService.DEFAULT_CHANNEL,
+                    context.getString(R.string.notif_channel_name),
+                    NotificationManager.IMPORTANCE_LOW).apply {
+                        lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+                        description = context.getString(R.string.notif_channel_description)
             }
             val service = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             service.createNotificationChannel(channel)
