@@ -17,7 +17,7 @@ class TimeoutPickerDialogFrag : PreferenceDialogFragmentCompat() {
         super.onBindDialogView(view)
         if (view == null) return
 
-        numPicker = view.findViewById(R.id.dialog_number_picker)
+        numPicker = view.findViewById(R.id.pref_log_size_number_picker)
         prefImpl = preference as TimeoutPreference
         with(numPicker) {
             maxValue = 30

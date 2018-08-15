@@ -34,12 +34,6 @@ class PrefsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPref
 
     override fun onDisplayPreferenceDialog(preference: Preference) {
         when (preference) {
-            is NumberPickerPreference -> {
-                NumberPickerDialogFrag.newInstance(preference).also {
-                    it.setTargetFragment(this, 0)
-                    it.show(fragmentManager, "android.support.v7.preference.PreferenceFragment.DIALOG")
-                }
-            }
             is TimeoutPreference -> {
                 TimeoutPickerDialogFrag.newInstance(preference).also {
                     it.setTargetFragment(this, 0)

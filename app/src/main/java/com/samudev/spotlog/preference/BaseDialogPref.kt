@@ -7,6 +7,11 @@ import android.support.v7.preference.DialogPreference
 import android.util.AttributeSet
 import android.widget.NumberPicker
 
+
+/**
+ * Implements most of the logic for a DialogPreference, including rotation events. See implementation
+ * in TimeoutPreference, and UI impl in TimeoutPickerDialogFrag
+ */
 abstract class BaseDialogPref(context: Context, attributeSet: AttributeSet) :
         DialogPreference(context, attributeSet), NumberPicker.OnValueChangeListener {
 
@@ -16,7 +21,7 @@ abstract class BaseDialogPref(context: Context, attributeSet: AttributeSet) :
     var selectedValue = 1
         set(value) {
             field = value
-            persistInt(value)
+            persistInt(value)  // Save to dataStore
         }
 
     override fun onGetDefaultValue(a: TypedArray?, index: Int): Any {
@@ -32,7 +37,7 @@ abstract class BaseDialogPref(context: Context, attributeSet: AttributeSet) :
 
     override fun getDialogLayoutResource() = layoutResourceId
 
-    // get the value from the numberpicker so it survices configuration change
+    // get the value from the numberpicker so it survives configuration change
     override fun onValueChange(numberPicker: NumberPicker, from: Int, to: Int) {
         selectedValue = to
     }

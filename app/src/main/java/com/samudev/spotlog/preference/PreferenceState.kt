@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.preference.Preference
 
-
+// copied from https://developer.android.com/guide/topics/ui/settings#Custom
 class SavedState : Preference.BaseSavedState {
     // Member that holds the setting's value
     // Change this data type to match the type saved by your Preference

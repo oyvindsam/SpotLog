@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_log_size_entries">
+        <item>10 songs</item>
+        <item>20 songs</item>
+        <item>40 songs</item>
+        <item>80 songs</item>
+        <item>All songs</item>
+    </string-array>
+
+    <string-array name="pref_log_size_values">
+        <item>10</item>
+        <item>20</item>
+        <item>40</item>
+        <item>80</item>
+        <item>-1</item> <!-- save all -->
+    </string-array>
+</resources>

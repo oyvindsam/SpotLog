@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<NumberPicker
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/dialog_number_picker"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:gravity="center">
+    android:layout_height="wrap_content">
 
-</NumberPicker>
+    <NumberPicker
+        android:id="@+id/pref_log_size_number_picker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true">
+    </NumberPicker>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/pref_log_size_number_picker"
+        android:paddingStart="4dp"
+        android:layout_centerVertical="true"
+        android:text="@string/pref_log_size_hint"/>
+
+</RelativeLayout>

@@ -2,8 +2,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="Preference Title">
 
-<!-- TODO: add custom numberpicker preference for selecting log-timeout -->
-
     <SwitchPreference
         android:key="@string/pref_foreground_key"
         android:title="@string/pref_foreground_title"
@@ -11,17 +9,20 @@
         android:summaryOff="@string/pref_foreground_summary_off"
         android:defaultValue="@bool/pref_foreground_default_value" />
 
-    <com.samudev.spotlog.preference.NumberPickerPreference
-        android:key="number_picker"
-        android:title="Max songs in log"
-        android:defaultValue="20">
-
-    </com.samudev.spotlog.preference.NumberPickerPreference>
+    <ListPreference
+        android:key="@string/pref_log_size_key"
+        android:title="@string/pref_log_size_title"
+        android:summary="@string/pref_log_size_summary"
+        android:entries="@array/pref_log_size_entries"
+        android:entryValues="@array/pref_log_size_values"
+        android:defaultValue="@integer/pref_log_size_default_value">
+    </ListPreference>
 
     <com.samudev.spotlog.preference.TimeoutPreference
-        android:key="timeout_picker"
-        android:title="Timeout"
-        android:defaultValue="30">
+        android:key="@string/pref_timeout_key"
+        android:title="@string/pref_timeout_title"
+        android:summary="@string/pref_timeout_summary"
+        android:defaultValue="@string/pref_timeout_default_value">
     </com.samudev.spotlog.preference.TimeoutPreference>
 
 

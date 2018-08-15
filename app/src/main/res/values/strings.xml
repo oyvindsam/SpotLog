@@ -28,6 +28,15 @@
     <string name="pref_foreground_title">Foreground service</string>
     <string name="pref_foreground_summary_on">Foreground service is running</string>
     <string name="pref_foreground_summary_off">Foreground service is off</string>
+    <string name="pref_log_size_key">log_size_key</string>
+    <string name="pref_log_size_title">Max songs in log</string>
+    <string name="pref_log_size_summary">Select the maximum amount of songs to be logged at a time. Old songs will be deleted</string>
+    <string name="pref_log_size_hint">minutes</string>
+    <string name="pref_timeout_key">timeout_key</string>
+    <string name="pref_timeout_title">Timeout</string>
+    <string name="pref_timeout_summary">Select the timeout for logging same song twice</string>
+    <string name="pref_timeout_default_value">10</string>
+
 
     <!-- Dialog -->
     <string name="dialog_broadcast_title">Enable Device Broadcast Status</string>
