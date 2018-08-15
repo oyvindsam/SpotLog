@@ -85,7 +85,8 @@ class LogFragment : Fragment() {
 
     private fun showEnableBroadcastDialog() {
         if (isPackageInstalled(Spotify.PACKAGE_NAME, context?.packageManager)) {
-            sharedPreferences.applyPref(Pair("FIRST_LAUNCH", false))
+
+            /*sharedPreferences.applyPref(Pair("FIRST_LAUNCH", false))
                     AlertDialog.Builder(context)
                             .setTitle(getString(R.string.dialog_broadcast_title))
                             .setMessage(getString(R.string.dialog_broadcast_message))
@@ -95,7 +96,7 @@ class LogFragment : Fragment() {
                             .setNegativeButton(getString(R.string.dialog_broadcast_negative)) { dialog, key ->
                                 dialog.cancel()
                             }
-                            .show()
+                            .show()*/
                 }
         else {
             AlertDialog.Builder(context)

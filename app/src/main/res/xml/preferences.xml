@@ -11,4 +11,11 @@
         android:summaryOff="@string/pref_foreground_summary_off"
         android:defaultValue="@bool/pref_foreground_default_value" />
 
+    <com.samudev.spotlog.preference.NumberPickerPreference
+        android:key="number_picker"
+        android:title="Max songs in log"
+        android:defaultValue="20">
+
+    </com.samudev.spotlog.preference.NumberPickerPreference>
+
 </PreferenceScreen>
