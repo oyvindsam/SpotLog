@@ -8,33 +8,35 @@ import android.widget.NumberPicker
 import com.samudev.spotlog.R
 
 
-class NumberPickerDialogFrag : PreferenceDialogFragmentCompat() {
+class TimeoutPickerDialogFrag : PreferenceDialogFragmentCompat() {
 
     private lateinit var numPicker: NumberPicker
+    private lateinit var prefImpl: TimeoutPreference
 
     override fun onBindDialogView(view: View?) {
         super.onBindDialogView(view)
         if (view == null) return
+
         numPicker = view.findViewById(R.id.dialog_number_picker)
+        prefImpl = preference as TimeoutPreference
         with(numPicker) {
-            maxValue = 100
-            minValue = 1
-            value = (preference as NumberPickerPreference).selectedValue
+            maxValue = 30
+            minValue = 5
+            value = prefImpl.selectedValue
+            setOnValueChangedListener(prefImpl)
         }
     }
 
     override fun onDialogClosed(positiveResult: Boolean) {
-        if (positiveResult) (preference as NumberPickerPreference).selectedValue = numPicker.value
+        if (positiveResult) prefImpl.selectedValue = numPicker.value
     }
 
     companion object {
 
-        fun newInstance(preference: Preference): NumberPickerDialogFrag {
-            val fragment = NumberPickerDialogFrag()
-            val bundle = Bundle(1)
-            bundle.putString(ARG_KEY, preference.key)
-            fragment.arguments = bundle
-            return fragment
+        fun newInstance(preference: Preference): TimeoutPickerDialogFrag {
+            return TimeoutPickerDialogFrag().apply {
+                arguments = Bundle(1).apply { putString(ARG_KEY, preference.key) }
+            }
         }
     }
 

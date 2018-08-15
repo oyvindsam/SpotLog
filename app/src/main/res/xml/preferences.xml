@@ -18,4 +18,11 @@
 
     </com.samudev.spotlog.preference.NumberPickerPreference>
 
+    <com.samudev.spotlog.preference.TimeoutPreference
+        android:key="timeout_picker"
+        android:title="Timeout"
+        android:defaultValue="30">
+    </com.samudev.spotlog.preference.TimeoutPreference>
+
+
 </PreferenceScreen>
