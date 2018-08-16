@@ -66,4 +66,11 @@ class PrefsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPref
         super.onPause()
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
     }
+
+    companion object {
+        const val PREF_LOG_SIZE_KEY = "log_size_key"
+        const val PREF_LOG_SIZE_DEFAULT = "40" // values are saved as a string-array of ints. must be converted later
+        const val PREF_TIMEOUT_KEY = "timeout_key"
+        const val PREF_TIMEOUT_DEFAULT = 10
+    }
 }

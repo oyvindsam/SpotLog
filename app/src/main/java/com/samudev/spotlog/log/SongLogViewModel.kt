@@ -1,13 +1,16 @@
 package com.samudev.spotlog.log
 
 import android.arch.lifecycle.*
+import android.content.SharedPreferences
 import android.util.Log
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.data.SongRepository
+import com.samudev.spotlog.preference.PrefsFragment
+import com.samudev.spotlog.utilities.getIntOrDefault
 import javax.inject.Inject
 
 
-class SongLogViewModel @Inject constructor(val songRepository: SongRepository) : ViewModel() {
+class SongLogViewModel @Inject constructor(val songRepository: SongRepository, val prefs: SharedPreferences) : ViewModel() {
 
     private val LOG_TAG: String = SongLogViewModel::class.java.simpleName
 
@@ -43,6 +46,9 @@ class SongLogViewModel @Inject constructor(val songRepository: SongRepository) :
         }
     }
 
+    fun onResume() {
+        songRepository.removeOldSongs(prefs.getIntOrDefault(PrefsFragment.PREF_LOG_SIZE_KEY))
+    }
 
     override fun onCleared() {
         Log.d(LOG_TAG, "OnCleared, Context: $this")

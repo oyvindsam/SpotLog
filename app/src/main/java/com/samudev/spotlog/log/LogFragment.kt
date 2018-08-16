@@ -159,6 +159,7 @@ class LogFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         context?.startService(loggerServiceIntentBackground)
+        viewModel.onResume()
     }
 
     override fun onPause() {

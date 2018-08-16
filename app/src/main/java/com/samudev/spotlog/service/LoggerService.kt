@@ -3,10 +3,10 @@ package com.samudev.spotlog.service
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
-import android.util.Log
 import com.samudev.spotlog.R
 import com.samudev.spotlog.SpotLogApplication
 import com.samudev.spotlog.data.Song
@@ -14,6 +14,9 @@ import com.samudev.spotlog.data.SongRepository
 import com.samudev.spotlog.log.LogActivity
 import com.samudev.spotlog.log.LogFragment
 import com.samudev.spotlog.log.Spotify
+import com.samudev.spotlog.preference.PrefsFragment
+import com.samudev.spotlog.utilities.getIntOrDefault
+import com.samudev.spotlog.utilities.minutesToMillis
 import javax.inject.Inject
 
 
@@ -59,6 +62,9 @@ class LoggerService : Service() {
     @Inject
     lateinit var repository: SongRepository
 
+    @Inject
+    lateinit var prefs: SharedPreferences
+
     private var notificationIsActive = false
     private var lastSong: Song? = null
 
@@ -91,15 +97,16 @@ class LoggerService : Service() {
     }
 
     private fun log(song: Song) {
-        lastSong = song
-        Log.d(LOG_TAG, "Log called, context: $this songRegistered: ${song.track} ${song.registeredTime}")
-        repository.logSong(song, ::notifySongLogged)
-        // TODO: show all songs picked up or only those (conditionally) saved to db?
-        //if (lastSong != song) notifySongLogged(song)
+        lastSong = song  // keep track of the last logged song
+
+        val logSize = prefs.getIntOrDefault(PrefsFragment.PREF_LOG_SIZE_KEY)
+        val fromTime = System.currentTimeMillis() - prefs.getIntOrDefault(PrefsFragment.PREF_TIMEOUT_KEY).minutesToMillis()
+        repository.logSong(fromTime, logSize, song, ::notifySongLogged)
+
     }
 
     private fun notifySongLogged(song: Song?) {
-        if (!notificationIsActive || song == null) return  // chekc if notification is currently active
+        if (!notificationIsActive || song == null) return  // check if notification is currently active
         notification.setContentText("${song.track} - ${song.artist}")
         NotificationManagerCompat.from(this).notify(LoggerService.NOTIFICATION_ID, notification.build())
     }

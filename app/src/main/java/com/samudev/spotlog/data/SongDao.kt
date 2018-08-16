@@ -32,4 +32,7 @@ interface SongDao {
     @Delete
     fun deleteSong(song: Song): Int
 
+    // SqlLite does not support ORDER BY in DELETE FROM query.
+    @Query("DELETE FROM song WHERE registered_time NOT IN (SELECT registered_time FROM song ORDER BY registered_time DESC LIMIT :logSize)")
+    fun deleteOld(logSize: Int): Int
 }

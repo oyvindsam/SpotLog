@@ -1,7 +1,6 @@
 package com.samudev.spotlog.data
 
 import android.arch.lifecycle.LiveData
-import com.samudev.spotlog.log.LogTimeFilter
 import com.samudev.spotlog.utilities.runOnIoThread
 import javax.inject.Inject
 
@@ -25,10 +24,11 @@ class SongRepository @Inject constructor(val songDao: SongDao) {
     }
 
     // log song if it is not recently logged
-    fun logSong(song: Song, callback: ((Song) -> Unit)) {
+    fun logSong(fromTime: Long, logSize: Int, song: Song, callback: ((Song) -> Unit)) {
         runOnIoThread {
-            if (!songDao.getLatestNoLiveData(LogTimeFilter.FIFTEEN_MINUTES)
-                            .any { s -> s.trackId == song.trackId }) {
+            if (!(songDao.getLatestNoLiveData(fromTime)
+                            .any { s -> s.trackId == song.trackId })) {
+                songDao.deleteOld(logSize - 1)
                 songDao.insertSong(song)
                 callback(song)
             }
@@ -41,4 +41,7 @@ class SongRepository @Inject constructor(val songDao: SongDao) {
     fun removeSong(song: Song) = runOnIoThread { songDao.deleteSong(song) }
 
     fun clearSongs() = runOnIoThread { songDao.clearTable() }
+
+    fun removeOldSongs(logSize: Int) = runOnIoThread { songDao.deleteOld(logSize) }
+
 }

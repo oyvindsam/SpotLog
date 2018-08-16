@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="pref_log_size_entries">
+        <item>5 songs</item>
         <item>10 songs</item>
         <item>20 songs</item>
         <item>40 songs</item>
@@ -9,6 +10,7 @@
     </string-array>
 
     <string-array name="pref_log_size_values">
+        <item>5</item>
         <item>10</item>
         <item>20</item>
         <item>40</item>
