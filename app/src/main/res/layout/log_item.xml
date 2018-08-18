@@ -32,7 +32,8 @@
                 android:maxLines="1"
                 android:textSize="16sp"
                 android:textAppearance="?attr/textAppearanceListItem"
-                tools:text="@{song.track, default=Track Name is very long indeeed}"/>
+                android:text="@{song.track}"
+                tools:text="Track Name is very long indeeed" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -46,17 +47,8 @@
                     android:textSize="14sp"
                     android:textColor="#666666"
                     android:textAppearance="?attr/textAppearanceListItem"
-                    tools:text="@{song.artist, default=Artisnt name}"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="4dp"
-                    android:textSize="14sp"
-                    android:textColor="#666666"
-                    android:textAppearance="?attr/textAppearanceListItem"
-                    android:text="-"/>
+                    android:text="@{song.artist + ` - `}"
+                    tools:text="Artist name - "/>
 
                 <TextView
                     android:id="@+id/song_album"
@@ -66,7 +58,19 @@
                     android:textSize="14sp"
                     android:textColor="#666666"
                     android:textAppearance="?attr/textAppearanceListItem"
-                    tools:text="@{song.album, default=Album name}"/>
+                    android:text="@{song.album}"
+                    tools:text="Album name"/>
+
+                <TextView
+                    android:id="@+id/song_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:textSize="14sp"
+                    android:textColor="#666666"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:text="@{String.valueOf(song.registeredTime)}"
+                    tools:text="Registered time"/>
 
             </LinearLayout>
 

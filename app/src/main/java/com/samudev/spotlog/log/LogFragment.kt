@@ -68,6 +68,12 @@ class LogFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, position: Int) {
                 viewModel.removeSong(viewHolder.itemView.tag as Song)
             }
+
+            // remove swiping for header items
+            override fun getSwipeDirs(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+                if (viewHolder is LogAdapter.HeaderViewHolder) return 0
+                return super.getSwipeDirs(recyclerView, viewHolder)
+            }
         }).attachToRecyclerView(binding.songList)
 
         val adapter = LogAdapter() // Not injected by dagger yet since the adapter needs to be refactored
@@ -75,7 +81,7 @@ class LogFragment : Fragment() {
         // Init list
         viewModel.songLog.observe(viewLifecycleOwner, Observer { songs ->
             if (songs != null) {
-                adapter.submitList(songs)
+                adapter.submitSongs(songs)
                 noHistoryTextView.visibility = if (songs.isEmpty()) View.VISIBLE else View.GONE // TODO: textview should observe a mutablelivedata in viewmodel
             }
         })
