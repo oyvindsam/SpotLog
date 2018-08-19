@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable name="date" type="java.time.LocalDate"/>
+        <variable name="date" type="String"/>
     </data>
 
     <LinearLayout

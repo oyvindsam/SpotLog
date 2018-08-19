@@ -3,7 +3,6 @@ package com.samudev.spotlog.log
 
 import android.support.v7.recyclerview.extensions.ListAdapter
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,10 +12,9 @@ import com.samudev.spotlog.databinding.LogHeaderBinding
 import com.samudev.spotlog.databinding.LogItemBinding
 import com.samudev.spotlog.utilities.toLocalDateTime
 import com.samudev.spotlog.utilities.toReadableString
-import java.time.Instant
+import java.text.DateFormat.getDateInstance
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.util.*
 
 /**
  * [ListAdapter] that can display a [Song] and makes a call to the
@@ -35,26 +33,15 @@ class LogAdapter
         }
     }
 
-    /**
-     * This method is literally shit. It is wrapped in a giant FIXME
-     */
-    fun submitSongs(list: List<Song>?) {
-        if (list == null) return
+    fun submitSongs(list: List<Song>) {
         var lastDate: LocalDate? = null
         val songList = mutableListOf<ListItem>()
-        list.forEach {
-            val date = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.registeredTime), ZoneId.systemDefault()).toLocalDate()
-            if (lastDate == null) {
-                lastDate = date
-                songList.add(HeaderItem(date))
-                songList.add(SongItem(it))
-                Log.d("NEW DATE: ", ":: $date")
-            }
-            else if (date == lastDate) songList.add(SongItem(it))
+        list.forEach { song ->
+            val date = song.registeredTime.toLocalDateTime().toLocalDate()  // group only on day-date
+            if (date == lastDate) songList.add(SongItem(song))
             else {
                 lastDate = date
-                songList.add(HeaderItem(date))
-                songList.add(SongItem(it))
+                songList.addAll(listOf(HeaderItem(date), SongItem(song)))
             }
         }
         submitList(songList)
@@ -103,7 +90,7 @@ class LogAdapter
     class HeaderViewHolder(private val binding: LogHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: LocalDate) {
             binding.apply {
-                date = item
+                date = getDateInstance().format(Date(item.toEpochDay() * 60*60*24*1000))  // TODO: Fix this date mess
                 executePendingBindings()
             }
         }
