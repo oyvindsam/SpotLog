@@ -5,7 +5,6 @@ import android.content.res.TypedArray
 import android.os.Parcelable
 import android.support.v7.preference.DialogPreference
 import android.util.AttributeSet
-import android.util.Log
 import android.widget.NumberPicker
 
 
@@ -21,10 +20,7 @@ abstract class BaseDialogPref(context: Context, attributeSet: AttributeSet) :
 
     var selectedValue = PrefsFragment.PREF_TIMEOUT_DEFAULT
 
-    fun saveValue() {
-        Log.d("saveValue", "value: $selectedValue")
-        persistInt(selectedValue)
-    }
+    fun saveValue() = persistInt(selectedValue)
 
     override fun onGetDefaultValue(a: TypedArray?, index: Int): Any {
         return a?.getInt(index, 0) ?: defaultValue
@@ -52,8 +48,6 @@ abstract class BaseDialogPref(context: Context, attributeSet: AttributeSet) :
 
         val myState = SavedState(superState)
         myState.value = selectedValue
-        Log.d("BaseDialogPref", "saving selctedvalue: ${myState.value}")
-
         return myState
     }
 

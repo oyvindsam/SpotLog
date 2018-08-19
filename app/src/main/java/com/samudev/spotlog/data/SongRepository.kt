@@ -9,6 +9,7 @@ private val LOG_TAG: String = SongRepository::class.java.simpleName
 
 class SongRepository @Inject constructor(val songDao: SongDao) {
 
+    private var lastLogged: Song? = null
 
     fun getSongsLatest(fromTime: Long): LiveData<List<Song>> {
         return songDao.getLatest(System.currentTimeMillis() - fromTime)
@@ -18,16 +19,17 @@ class SongRepository @Inject constructor(val songDao: SongDao) {
 
     fun getLastLoggedSong(callback: ((Song?) -> Unit)) {
         runOnIoThread {
-            val song = songDao.getLatestLoggedSong()
-            callback(song)
+            lastLogged = songDao.getLatestLoggedSong()
+            callback(lastLogged)
         }
     }
 
-    // log song if it is not recently logged
+    // log song if it is not recently logged or is last logged song
     fun logSong(fromTime: Long, logSize: Int, song: Song, callback: ((Song) -> Unit)) {
         runOnIoThread {
-            if (!(songDao.getLatestNoLiveData(fromTime)
-                            .any { s -> s.trackId == song.trackId })) {
+            val recentSongs = songDao.getLatestNoLiveData(fromTime)
+            val lastSong = songDao.getLatestLoggedSong()
+            if (!(recentSongs.any { s -> s.trackId == song.trackId }) && lastSong?.trackId != song.trackId) {
                 songDao.deleteOld(logSize - 1)
                 songDao.insertSong(song)
                 callback(song)
