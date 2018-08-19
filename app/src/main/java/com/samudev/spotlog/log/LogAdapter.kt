@@ -7,9 +7,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.databinding.LogHeaderBinding
 import com.samudev.spotlog.databinding.LogItemBinding
+import com.samudev.spotlog.utilities.toLocalDateTime
+import com.samudev.spotlog.utilities.toReadableString
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -21,8 +24,6 @@ import java.time.ZoneId
  */
 class LogAdapter
     : ListAdapter<LogAdapter.ListItem, RecyclerView.ViewHolder>(SongDiffCallback()) {
-
-    // listeners for the callback interface
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -49,8 +50,9 @@ class LogAdapter
                 songList.add(SongItem(it))
                 Log.d("NEW DATE: ", ":: $date")
             }
-            else if (date.month == lastDate?.month && date.dayOfMonth == lastDate?.dayOfMonth) songList.add(SongItem(it))
+            else if (date == lastDate) songList.add(SongItem(it))
             else {
+                lastDate = date
                 songList.add(HeaderItem(date))
                 songList.add(SongItem(it))
             }
@@ -63,16 +65,18 @@ class LogAdapter
             ListItem.TYPE_HEADER -> {
                 val headerItem = getItem(position) as HeaderItem
                 (holder as HeaderViewHolder).apply {
-                    bind(headerItem.dateTime)
-                    itemView.tag = headerItem.dateTime
+                    bind(headerItem.date)
+                    itemView.tag = headerItem.date
                 }
             }
             ListItem.TYPE_NORMAL -> {
                 val songItem = getItem(position) as SongItem
                 (holder as SongViewHolder).apply {
-                    bind(View.OnClickListener { _ ->
-                        Log.d("Adapter", "${songItem.song.track} clicked!") },
-                            songItem.song)
+                    bind(View.OnClickListener { view ->
+                        Toast.makeText(view.context,
+                                "${songItem.song.track} was logged ${songItem.song.registeredTime.toLocalDateTime().toReadableString()}",
+                                Toast.LENGTH_SHORT).show() },
+                            songItem.song )
                     itemView.tag = songItem.song
                 }
             }
@@ -96,7 +100,7 @@ class LogAdapter
         }
     }
 
-    inner class HeaderViewHolder(private val binding: LogHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
+    class HeaderViewHolder(private val binding: LogHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: LocalDate) {
             binding.apply {
                 date = item
@@ -115,15 +119,8 @@ class LogAdapter
         }
     }
 
-    class SongItem(var song: Song) : ListItem {
-        override val type = ListItem.TYPE_NORMAL
-    }
+    class SongItem(var song: Song, override val type: Int = ListItem.TYPE_NORMAL) : ListItem
 
-    class HeaderItem(var dateTime: LocalDate) : ListItem {
-            override val type = ListItem.TYPE_HEADER
-    }
-
-
-
+    class HeaderItem(var date: LocalDate, override val type: Int = ListItem.TYPE_HEADER) : ListItem
 
 }

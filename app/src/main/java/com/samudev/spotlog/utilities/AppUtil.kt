@@ -2,6 +2,11 @@ package com.samudev.spotlog.utilities
 
 import android.content.SharedPreferences
 import com.samudev.spotlog.preference.PrefsFragment
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 fun SharedPreferences.getIntOrDefault(key: String): Int {
     return when (key) {
@@ -12,3 +17,9 @@ fun SharedPreferences.getIntOrDefault(key: String): Int {
 }
 
 fun Int.minutesToMillis() = this * 1000 * 60  // convert minutes to milliseconds
+
+fun Long.toLocalDateTime(): LocalDateTime =
+        LocalDateTime.ofInstant(Instant.ofEpochMilli(this), ZoneId.systemDefault())
+
+fun LocalDateTime.toReadableString() = this.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM))
+

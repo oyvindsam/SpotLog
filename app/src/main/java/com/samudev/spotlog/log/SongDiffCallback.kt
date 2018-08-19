@@ -10,7 +10,7 @@ class SongDiffCallback : DiffUtil.ItemCallback<ListItem>() {
             oldItem.song.trackId == newItem.song.trackId &&
                     oldItem.song.registeredTime == newItem.song.registeredTime
         } else if (oldItem is HeaderItem && newItem is HeaderItem) {
-            oldItem.dateTime == newItem.dateTime
+            oldItem.date == newItem.date
         }
         else false
     }
@@ -19,7 +19,7 @@ class SongDiffCallback : DiffUtil.ItemCallback<ListItem>() {
     // base objects since new ViewHolders are created on each update.
     override fun areContentsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {
         return if (oldItem is SongItem && newItem is SongItem) oldItem.song == newItem.song
-        else if (oldItem is HeaderItem && newItem is HeaderItem) oldItem.dateTime == newItem.dateTime
+        else if (oldItem is HeaderItem && newItem is HeaderItem) oldItem.date == newItem.date
         else throw IllegalArgumentException("Should not have been possible to call this with two different objects!")
     }
 }

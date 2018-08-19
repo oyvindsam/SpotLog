@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:orientation="horizontal"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
         android:onClick="@{clickListener}">
@@ -60,17 +60,6 @@
                     android:textAppearance="?attr/textAppearanceListItem"
                     android:text="@{song.album}"
                     tools:text="Album name"/>
-
-                <TextView
-                    android:id="@+id/song_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:textSize="14sp"
-                    android:textColor="#666666"
-                    android:textAppearance="?attr/textAppearanceListItem"
-                    android:text="@{String.valueOf(song.registeredTime)}"
-                    tools:text="Registered time"/>
 
             </LinearLayout>
 
