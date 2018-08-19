@@ -27,8 +27,9 @@ class TimeoutPickerDialogFrag : PreferenceDialogFragmentCompat() {
         }
     }
 
+    // should already be correct by its valueChangeListener
     override fun onDialogClosed(positiveResult: Boolean) {
-        if (positiveResult) prefImpl.selectedValue = numPicker.value
+        if (positiveResult) prefImpl.saveValue()
     }
 
     companion object {
