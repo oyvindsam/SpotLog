@@ -4,14 +4,14 @@
     <!-- Only for testing -->
     <item
         android:id="@+id/one_minute"
-        android:title="@string/one_minute" />
+        android:title="@string/menu_filter_one_minute" />
     <item
         android:id="@+id/one_hour"
-        android:title="@string/one_hour" />
+        android:title="@string/menu_filter_one_hour" />
     <item
         android:id="@+id/twelve_hours"
-        android:title="@string/twelve_hours" />
+        android:title="@string/menu_filter_twelve_hours" />
     <item
         android:id="@+id/all"
-        android:title="@string/all" />
+        android:title="@string/menu_filter_all" />
 </menu>

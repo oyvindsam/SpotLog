@@ -6,23 +6,20 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.*
 import android.widget.PopupMenu
 import androidx.navigation.fragment.findNavController
 import com.samudev.spotlog.R
 import com.samudev.spotlog.SpotLogApplication
-import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.databinding.LogFragmentBinding
 import com.samudev.spotlog.dependencyinjection.DaggerLogFragmentComponent
+import com.samudev.spotlog.preference.PrefsFragment.Companion.PREF_FIRST_LAUNCH
 import com.samudev.spotlog.service.LoggerService
-import com.samudev.spotlog.utilities.autoCleared
+import com.samudev.spotlog.utilities.isPackageInstalled
 import kotlinx.android.synthetic.main.log_fragment.*
 import javax.inject.Inject
 
@@ -43,7 +40,7 @@ class LogFragment : Fragment() {
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
-    var binding by autoCleared<LogFragmentBinding>()
+    lateinit var binding: LogFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -61,22 +58,7 @@ class LogFragment : Fragment() {
         initDagger()
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(SongLogViewModel::class.java)
 
-        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-            override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
-                return true
-            }
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, position: Int) {
-                viewModel.removeSong(viewHolder.itemView.tag as Song)
-            }
-
-            // remove swiping for header items
-            override fun getSwipeDirs(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-                if (viewHolder is LogAdapter.HeaderViewHolder) return 0
-                return super.getSwipeDirs(recyclerView, viewHolder)
-            }
-        }).attachToRecyclerView(binding.songList)
-
-        val adapter = LogAdapter() // Not injected by dagger yet since the adapter needs to be refactored
+        val adapter = LogAdapter(swipeCallback = { song -> viewModel.removeSong(song) })
         binding.songList.adapter = adapter
         // Init list
         viewModel.songLog.observe(viewLifecycleOwner, Observer { songs ->
@@ -86,23 +68,23 @@ class LogFragment : Fragment() {
             }
         })
 
-        if (sharedPreferences.getBoolean("FIRST_LAUNCH", true)) showEnableBroadcastDialog()
+        if (sharedPreferences.getBoolean(PREF_FIRST_LAUNCH, true)) showEnableBroadcastDialog()
     }
 
     private fun showEnableBroadcastDialog() {
         if (isPackageInstalled(Spotify.PACKAGE_NAME, context?.packageManager)) {
-            sharedPreferences.applyPref(Pair("FIRST_LAUNCH", false))
-                    AlertDialog.Builder(context)
-                            .setTitle(getString(R.string.dialog_broadcast_title))
-                            .setMessage(getString(R.string.dialog_broadcast_message))
-                            .setPositiveButton(getString(R.string.dialog_broadcast_positive)) { dialog, key ->
-                                startActivity(context?.packageManager?.getLaunchIntentForPackage("com.spotify.music"))
-                            }
-                            .setNegativeButton(getString(R.string.dialog_broadcast_negative)) { dialog, key ->
-                                dialog.cancel()
-                            }
-                            .show()
-                }
+            sharedPreferences.applyPref(Pair(PREF_FIRST_LAUNCH, false))
+            AlertDialog.Builder(context)
+                    .setTitle(getString(R.string.dialog_broadcast_title))
+                    .setMessage(getString(R.string.dialog_broadcast_message))
+                    .setPositiveButton(getString(R.string.dialog_broadcast_positive)) { dialog, key ->
+                        startActivity(context?.packageManager?.getLaunchIntentForPackage("com.spotify.music"))
+                    }
+                    .setNegativeButton(getString(R.string.dialog_broadcast_negative)) { dialog, key ->
+                        dialog.cancel()
+                    }
+                    .show()
+        }
         else {
             AlertDialog.Builder(context)
                     .setTitle(getString(R.string.dialog_package_title))
@@ -115,19 +97,9 @@ class LogFragment : Fragment() {
         }
     }
 
-    private fun isPackageInstalled(packagename: String, packageManager: PackageManager?): Boolean {
-        if (packageManager == null) return false
-        try {
-            packageManager.getPackageInfo(packagename, 0)
-        } catch (e: PackageManager.NameNotFoundException) {
-            return false
-        }
-        return true
-    }
-
     fun SharedPreferences.applyPref(pref: Pair<String, Any>) {
         val editor = this.edit()
-        when(pref.second) {
+        when (pref.second) {
             is Boolean -> editor.putBoolean(pref.first, pref.second as Boolean)
         }
         editor.apply()
@@ -151,7 +123,7 @@ class LogFragment : Fragment() {
             menuInflater.inflate(R.menu.filter_songs, menu)
             setOnMenuItemClickListener { item ->
                 when(item.itemId) {
-                    R.id.one_minute -> viewModel.setLogFilter(LogTimeFilter.ONE_MINUTE)
+                    R.id.one_minute -> viewModel.setLogFilter(LogTimeFilter.ONE_MINUTE)  // TODO: remove in production
                     R.id.one_hour -> viewModel.setLogFilter(LogTimeFilter.ONE_HOUR)
                     R.id.twelve_hours -> viewModel.setLogFilter(LogTimeFilter.TWELVE_HOURS)
                     else -> viewModel.setLogFilter(LogTimeFilter.ALL)

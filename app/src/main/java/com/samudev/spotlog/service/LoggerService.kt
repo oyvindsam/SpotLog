@@ -54,7 +54,7 @@ class LoggerService : Service() {
         NotificationCompat.Builder(this, LoggerService.DEFAULT_CHANNEL)  // Default channel needs to be set up before adding notification
                 .setSmallIcon(R.drawable.ic_tile_log_track)
                 .setContentTitle(getString(R.string.notif_content_title))
-                .setContentText(getString(R.string.notif_content_text))
+                //.setContentText(getString(R.string.notif_content_text))
                 .setContentIntent(notifPendingIntent)
                 .addAction(notifActionStop)
     }
@@ -107,7 +107,7 @@ class LoggerService : Service() {
 
     private fun notifySongLogged(song: Song?) {
         if (!notificationIsActive || song == null) return  // check if notification is currently active
-        notification.setContentText("${song.track} - ${song.artist}")
+        notification.setContentTitle("${song.track} - ${song.artist}")
         NotificationManagerCompat.from(this).notify(LoggerService.NOTIFICATION_ID, notification.build())
     }
 

@@ -3,6 +3,7 @@ package com.samudev.spotlog.log
 
 import android.support.v7.recyclerview.extensions.ListAdapter
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +21,7 @@ import java.util.*
  * [ListAdapter] that can display a [Song] and makes a call to the
  * specified [LogItemListener].
  */
-class LogAdapter
+class LogAdapter(private val swipeCallback: ((Song) -> Unit))
     : ListAdapter<LogAdapter.ListItem, RecyclerView.ViewHolder>(SongDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -45,6 +46,25 @@ class LogAdapter
             }
         }
         submitList(songList)
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
+                return true
+            }
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, position: Int) {
+                swipeCallback(viewHolder.itemView.tag as Song)
+            }
+
+            // remove swiping for header items
+            override fun getSwipeDirs(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+                if (viewHolder is HeaderViewHolder) return ItemTouchHelper.ACTION_STATE_IDLE
+                return super.getSwipeDirs(recyclerView, viewHolder)
+            }
+        }).attachToRecyclerView(recyclerView)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

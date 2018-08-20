@@ -72,5 +72,6 @@ class PrefsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPref
         const val PREF_LOG_SIZE_DEFAULT = "-1" // values are saved as a string-array of ints. must be converted later
         const val PREF_TIMEOUT_KEY = "timeout_key"
         const val PREF_TIMEOUT_DEFAULT = 10
+        const val PREF_FIRST_LAUNCH = "first_launch_key"
     }
 }

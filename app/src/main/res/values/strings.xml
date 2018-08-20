@@ -1,19 +1,14 @@
 <resources>
     <string name="app_name">SpotLog</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
-    <string name="all">Show all</string>
-    <string name="one_minute">1 minute</string>
-    <string name="twelve_hours">12 hours</string>
-    <string name="one_hour">1 hour</string>
+    <string name="menu_clear">Clear log</string>
     <string name="menu_filter">Filter</string>
-    <string name="menu_clear">Clear history</string>
+    <string name="menu_filter_one_minute">1 minute</string>
+    <string name="menu_filter_one_hour">1 hour</string>
+    <string name="menu_filter_twelve_hours">12 hours</string>
+    <string name="menu_filter_all">Show all</string>
     <string name="menu_settings">Settings</string>
-    <string name="tile_spotlog">Log track</string>
+    <string name="tile_spotlog">Log song</string>
 
     <!-- Notification -->
     <string name="notif_channel_name">Foreground service logger</string>
@@ -36,6 +31,7 @@
     <string name="pref_timeout_title">Timeout</string>
     <string name="pref_timeout_summary">Select the timeout for logging same song twice</string>
     <string name="pref_timeout_default_value">10</string>
+    <string name="pref_first_launch_key">first_launch_key</string>
 
 
     <!-- Dialog -->
