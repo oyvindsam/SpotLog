@@ -19,34 +19,33 @@ import com.samudev.spotlog.databinding.LogFragmentBinding
 import com.samudev.spotlog.dependencyinjection.DaggerLogFragmentComponent
 import com.samudev.spotlog.preference.PrefsFragment.Companion.PREF_FIRST_LAUNCH
 import com.samudev.spotlog.service.LoggerService
+import com.samudev.spotlog.utilities.Spotify
+import com.samudev.spotlog.utilities.applyPref
 import com.samudev.spotlog.utilities.isPackageInstalled
-import kotlinx.android.synthetic.main.log_fragment.*
 import javax.inject.Inject
 
 
-class LogFragment : Fragment() {
+private val LOG_TAG: String = LogFragment::class.java.simpleName
 
-    private val LOG_TAG: String = LogFragment::class.java.simpleName
+class LogFragment : Fragment() {
 
     // starts same service, just different action
     private val loggerServiceIntentBackground by lazy { Intent(LoggerService.ACTION_START_BACKGROUND, Uri.EMPTY, context, LoggerService::class.java) }
     private val loggerServiceIntentForeground by lazy { Intent(LoggerService.ACTION_START_FOREGROUND, Uri.EMPTY, context, LoggerService::class.java) }
 
-
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    lateinit var viewModel: SongLogViewModel
+    private lateinit var viewModel: SongLogViewModel
 
     @Inject
-    lateinit var sharedPreferences: SharedPreferences
+    lateinit var prefs: SharedPreferences
 
-    lateinit var binding: LogFragmentBinding
+    private lateinit var binding: LogFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        val databinding = DataBindingUtil.inflate<LogFragmentBinding>(inflater, R.layout.log_fragment, container, false)
-        binding = databinding
+        binding = DataBindingUtil.inflate<LogFragmentBinding>(inflater, R.layout.log_fragment, container, false)
 
         setHasOptionsMenu(true)
         return binding.root
@@ -61,48 +60,50 @@ class LogFragment : Fragment() {
         val adapter = LogAdapter(swipeCallback = { song -> viewModel.removeSong(song) })
         binding.songList.adapter = adapter
         // Init list
-        viewModel.songLog.observe(viewLifecycleOwner, Observer { songs ->
-            if (songs != null) {
-                adapter.submitSongs(songs)
-                noHistoryTextView.visibility = if (songs.isEmpty()) View.VISIBLE else View.GONE // TODO: textview should observe a mutablelivedata in viewmodel
-            }
-        })
 
-        if (sharedPreferences.getBoolean(PREF_FIRST_LAUNCH, true)) showEnableBroadcastDialog()
+        viewModel.run {
+            songLog.observe(viewLifecycleOwner, Observer { songs ->
+                if (songs != null) {
+                    adapter.submitSongs(songs)
+                }
+            })
+            isEmptyLog.observe(viewLifecycleOwner, Observer { isEmpty ->
+                if (isEmpty != null) {
+                    binding.noHistoryTextView.visibility = if (isEmpty) View.VISIBLE else View.GONE
+                }
+            })
+        }
+
+        if (prefs.getBoolean(PREF_FIRST_LAUNCH, true)) showEnableBroadcastDialog()
     }
 
+    // If Spotify is installed; show a 'enable broadcast' dialog. If not
     private fun showEnableBroadcastDialog() {
         if (isPackageInstalled(Spotify.PACKAGE_NAME, context?.packageManager)) {
-            sharedPreferences.applyPref(Pair(PREF_FIRST_LAUNCH, false))
+            prefs.applyPref(Pair(PREF_FIRST_LAUNCH, false))
             AlertDialog.Builder(context)
                     .setTitle(getString(R.string.dialog_broadcast_title))
                     .setMessage(getString(R.string.dialog_broadcast_message))
                     .setPositiveButton(getString(R.string.dialog_broadcast_positive)) { dialog, key ->
-                        startActivity(context?.packageManager?.getLaunchIntentForPackage("com.spotify.music"))
-                    }
+                        val intent = Intent(Intent.ACTION_APPLICATION_PREFERENCES)
+                        intent.`package` = Spotify.PACKAGE_NAME
+                        startActivity(intent) }
                     .setNegativeButton(getString(R.string.dialog_broadcast_negative)) { dialog, key ->
-                        dialog.cancel()
-                    }
+                        dialog.cancel() }
                     .show()
         }
-        else {
-            AlertDialog.Builder(context)
-                    .setTitle(getString(R.string.dialog_package_title))
-                    .setMessage(getString(R.string.dialog_package_message))
-                    .setNegativeButton(getString(R.string.dialog_package_negative)) { dialog, key ->
-                        dialog.cancel()
-                        activity?.finish()
-                    }
-                    .show()
-        }
+        else showSpotifyNotInstalledDialog()
     }
 
-    fun SharedPreferences.applyPref(pref: Pair<String, Any>) {
-        val editor = this.edit()
-        when (pref.second) {
-            is Boolean -> editor.putBoolean(pref.first, pref.second as Boolean)
-        }
-        editor.apply()
+    private fun showSpotifyNotInstalledDialog() {
+        AlertDialog.Builder(context)
+                .setTitle(getString(R.string.dialog_package_title))
+                .setMessage(getString(R.string.dialog_package_message))
+                .setNegativeButton(getString(R.string.dialog_package_negative)) { dialog, key ->
+                    dialog.cancel()
+                    activity?.finish()
+                }
+                .show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -122,7 +123,7 @@ class LogFragment : Fragment() {
         PopupMenu(context, activity?.findViewById(R.id.menu_filter)).apply {
             menuInflater.inflate(R.menu.filter_songs, menu)
             setOnMenuItemClickListener { item ->
-                when(item.itemId) {
+                when (item.itemId) {
                     R.id.one_minute -> viewModel.setLogFilter(LogTimeFilter.ONE_MINUTE)  // TODO: remove in production
                     R.id.one_hour -> viewModel.setLogFilter(LogTimeFilter.ONE_HOUR)
                     R.id.twelve_hours -> viewModel.setLogFilter(LogTimeFilter.TWELVE_HOURS)
@@ -145,7 +146,7 @@ class LogFragment : Fragment() {
         // Stop backgroundservice in fragment
         context?.stopService(loggerServiceIntentBackground)
         // if foregroundservice is turned ON.. turn it on
-        if (sharedPreferences.getBoolean(getString(R.string.pref_foreground_key), false)) context?.startService(loggerServiceIntentForeground)
+        if (prefs.getBoolean(getString(R.string.pref_foreground_key), false)) context?.startService(loggerServiceIntentForeground)
         else context?.stopService(loggerServiceIntentForeground)
     }
 

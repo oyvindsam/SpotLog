@@ -11,29 +11,31 @@ import android.widget.Toast
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.databinding.LogHeaderBinding
 import com.samudev.spotlog.databinding.LogItemBinding
+import com.samudev.spotlog.utilities.playIntent
 import com.samudev.spotlog.utilities.toLocalDateTime
 import com.samudev.spotlog.utilities.toReadableString
 import java.text.DateFormat.getDateInstance
 import java.time.LocalDate
 import java.util.*
 
-/**
- * [ListAdapter] that can display a [Song] and makes a call to the
- * specified [LogItemListener].
- */
+
 class LogAdapter(private val swipeCallback: ((Song) -> Unit))
     : ListAdapter<LogAdapter.ListItem, RecyclerView.ViewHolder>(SongDiffCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
-            ListItem.TYPE_HEADER -> HeaderViewHolder(LogHeaderBinding.inflate(
-                    LayoutInflater.from(parent.context), parent, false))
-            ListItem.TYPE_NORMAL -> SongViewHolder(LogItemBinding.inflate(
-                    LayoutInflater.from(parent.context), parent, false))
-            else -> throw IllegalArgumentException("unknown viewType: $viewType")
-        }
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
+            when (viewType) {
+                ListItem.TYPE_HEADER -> HeaderViewHolder(LogHeaderBinding.inflate(
+                        LayoutInflater.from(parent.context), parent, false))
+                ListItem.TYPE_NORMAL -> SongViewHolder(LogItemBinding.inflate(
+                        LayoutInflater.from(parent.context), parent, false))
+                else -> throw IllegalArgumentException("unknown viewType: $viewType")
+            }
 
+    /**
+     * @list songs sorted desc in time
+     * Insert a header item for each new date
+     * The generated list is then submitted to the adapter
+     */
     fun submitSongs(list: List<Song>) {
         var lastDate: LocalDate? = null
         val songList = mutableListOf<ListItem>()
@@ -45,18 +47,17 @@ class LogAdapter(private val swipeCallback: ((Song) -> Unit))
                 songList.addAll(listOf(HeaderItem(date), SongItem(song)))
             }
         }
-        submitList(songList)
+        this.submitList(songList)
     }
 
+    // Setup swipe gestures
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
 
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-            override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
-                return true
-            }
+            override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder) = true
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, position: Int) {
-                swipeCallback(viewHolder.itemView.tag as Song)
+                swipeCallback(viewHolder.itemView.tag as Song)  // headerItems can not be swiped
             }
 
             // remove swiping for header items
@@ -68,39 +69,37 @@ class LogAdapter(private val swipeCallback: ((Song) -> Unit))
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (getItemViewType(position)) {
-            ListItem.TYPE_HEADER -> {
-                val headerItem = getItem(position) as HeaderItem
+        val item = getItem(position)
+        when (item) {
+            is HeaderItem -> {
                 (holder as HeaderViewHolder).apply {
-                    bind(headerItem.date)
-                    itemView.tag = headerItem.date
+                    bind(item.date)
+                    itemView.tag = item.date
                 }
             }
-            ListItem.TYPE_NORMAL -> {
-                val songItem = getItem(position) as SongItem
+            is SongItem -> {
+                val song = item.song
                 (holder as SongViewHolder).apply {
-                    bind(View.OnClickListener { view ->
-                        Toast.makeText(view.context,
-                                "${songItem.song.track} was logged ${songItem.song.registeredTime.toLocalDateTime().toReadableString()}",
-                                Toast.LENGTH_SHORT).show() },
-                            songItem.song )
-                    itemView.tag = songItem.song
+                    bind(View.OnClickListener { Toast.makeText(it.context,
+                            "${song.track} was logged ${song.registeredTime.toLocalDateTime().toReadableString()}",
+                            Toast.LENGTH_SHORT).show() },
+                            View.OnClickListener { it.context.startActivity(song.playIntent()) },
+                            song)
+                    itemView.tag = song
                 }
             }
             else -> throw IllegalArgumentException("Unknown type; ${getItemViewType(position)}")
         }
-
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return getItem(position).type
-    }
+    override fun getItemViewType(position: Int): Int = getItem(position).type
 
     // Provides a reference to the views for each data item
     inner class SongViewHolder(private val binding: LogItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(listener: View.OnClickListener, item: Song) {
+        fun bind(listenerItem: View.OnClickListener, listenerPlay: View.OnClickListener, item: Song) {
             binding.apply {
-                clickListener = listener
+                clickListenerItem = listenerItem
+                clickListenerPlay = listenerPlay
                 song = item
                 executePendingBindings()
             }
