@@ -1,11 +1,12 @@
 package com.samudev.spotlog.service
 
 import android.service.quicksettings.TileService
+import android.util.Log
 import android.widget.Toast
 import com.samudev.spotlog.SpotLogApplication
 import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.data.SongRepository
-import com.samudev.spotlog.log.Spotify
+import com.samudev.spotlog.utilities.Spotify
 import javax.inject.Inject
 
 class SpotLogTileService : TileService() {
@@ -38,6 +39,7 @@ class SpotLogTileService : TileService() {
 
     private fun log(song: Song) {
         repository.saveSong(song)
+        Log.d(LOG_TAG, "Song: $song")
         Toast.makeText(this, "${song.track} by ${song.artist} logged", Toast.LENGTH_SHORT).show()
     }
 

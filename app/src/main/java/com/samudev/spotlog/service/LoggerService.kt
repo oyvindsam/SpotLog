@@ -13,8 +13,8 @@ import com.samudev.spotlog.data.Song
 import com.samudev.spotlog.data.SongRepository
 import com.samudev.spotlog.log.LogActivity
 import com.samudev.spotlog.log.LogFragment
-import com.samudev.spotlog.log.Spotify
 import com.samudev.spotlog.preference.PrefsFragment
+import com.samudev.spotlog.utilities.Spotify
 import com.samudev.spotlog.utilities.getIntOrDefault
 import com.samudev.spotlog.utilities.minutesToMillis
 import javax.inject.Inject

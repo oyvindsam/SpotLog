@@ -5,7 +5,7 @@ import dagger.Component
 
 
 @LogActivityScope
-@Component(dependencies = [AppComponent::class], modules = [LogFragmentModule::class])
+@Component(dependencies = [AppComponent::class])
 interface LogFragmentComponent {
 
     fun injectLogFragment(fragment: LogFragment)

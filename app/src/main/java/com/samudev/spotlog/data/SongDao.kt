@@ -17,7 +17,7 @@ interface SongDao {
     fun getLatestNoLiveData(fromTime: Long): List<Song>
 
     @Query("SELECT * FROM song ORDER BY registered_time DESC LIMIT 1")
-    fun getLatestLoggedSong(): Song?
+    fun getLastLoggedSong(): Song?
 
     @Query("DELETE FROM song")
     fun clearTable()

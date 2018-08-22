@@ -15,10 +15,10 @@ import android.widget.NumberPicker
 abstract class BaseDialogPref(context: Context, attributeSet: AttributeSet) :
         DialogPreference(context, attributeSet), NumberPicker.OnValueChangeListener {
 
-    abstract val layoutResourceId: Int
     abstract val defaultValue: Int
+    abstract override fun getDialogLayoutResource(): Int
 
-    var selectedValue = PrefsFragment.PREF_TIMEOUT_DEFAULT
+    var selectedValue = 0
 
     fun saveValue() = persistInt(selectedValue)
 
@@ -27,13 +27,8 @@ abstract class BaseDialogPref(context: Context, attributeSet: AttributeSet) :
     }
 
     override fun onSetInitialValue(defaultValue: Any?) {
-        if (defaultValue == null) {
-            selectedValue = getPersistedInt(this.defaultValue)
-        }
-        else selectedValue = defaultValue as Int
+        selectedValue = if (defaultValue is Int) defaultValue else getPersistedInt(this.defaultValue)
     }
-
-    override fun getDialogLayoutResource() = layoutResourceId
 
     // get the value from the numberpicker so it survives configuration change
     override fun onValueChange(numberPicker: NumberPicker, from: Int, to: Int) {

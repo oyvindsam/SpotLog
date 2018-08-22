@@ -10,6 +10,5 @@ class TimeoutPreference(context: Context, attributeSet: AttributeSet) : BaseDial
     override val defaultValue: Int
         get() = PrefsFragment.PREF_TIMEOUT_DEFAULT
 
-    override val layoutResourceId: Int
-        get() = R.layout.pref_number_picker
+    override fun getDialogLayoutResource(): Int = R.layout.pref_number_picker
 }

@@ -3,23 +3,19 @@ package com.samudev.spotlog.log
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.samudev.spotlog.R
 import com.samudev.spotlog.databinding.LogActivityBinding
 
-class LogActivity : AppCompatActivity() {
+private val LOG_TAG: String = LogActivity::class.java.simpleName
 
-    companion object {
-        private val LOG_TAG: String = LogActivity::class.java.simpleName
-    }
+class LogActivity : AppCompatActivity() {
 
     // TODO: logging service should probably always be active when the app is open
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(LOG_TAG, "Activity created, context: $this")
         val binding: LogActivityBinding = DataBindingUtil.setContentView(this, R.layout.log_activity)
 
         setSupportActionBar(binding.toolbar)
@@ -31,6 +27,5 @@ class LogActivity : AppCompatActivity() {
 
     }
 
-    override fun onSupportNavigateUp()
-            = findNavController(R.id.nav_host_fragment).navigateUp()
+    override fun onSupportNavigateUp() = findNavController(R.id.nav_host_fragment).navigateUp()
 }

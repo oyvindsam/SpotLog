@@ -11,13 +11,12 @@ import com.samudev.spotlog.SpotLogApplication
 import com.samudev.spotlog.service.LoggerService
 import javax.inject.Inject
 
+private val LOG_TAG: String = PrefsFragment::class.java.simpleName
 
 class PrefsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private val LOG_TAG: String = PrefsFragment::class.java.simpleName
-
     @Inject
-    lateinit var sharedPreferences: SharedPreferences
+    lateinit var prefs: SharedPreferences
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
@@ -59,12 +58,12 @@ class PrefsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPref
 
     override fun onResume() {
         super.onResume()
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+        prefs.registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onPause() {
         super.onPause()
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+        prefs.unregisterOnSharedPreferenceChangeListener(this)
     }
 
     companion object {
