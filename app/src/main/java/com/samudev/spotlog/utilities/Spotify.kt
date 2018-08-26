@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
-import android.util.Log
 import com.samudev.spotlog.data.Song
 
 
@@ -42,10 +41,7 @@ class Spotify {
 
 fun Song.playIntent(): Intent =
         Intent(Intent.ACTION_VIEW).apply {
-            Log.d("Song ", "id: ${trackId}")
             `package` = Spotify.PACKAGE_NAME
             data = Uri.parse(Spotify.URI_WEB_TRACK + trackId.substring(14))
-            Log.d("Song ", "id: ${data}")
-
         }
 
