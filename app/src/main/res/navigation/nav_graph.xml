@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/logFragment"
-        android:name="com.samudev.spotlog.log.LogFragment"
+        android:name="com.developments.samu.spotlog.log.LogFragment"
         android:label="SpotLog" >
         <action
             android:id="@+id/action_to_settings"
@@ -13,6 +13,6 @@
     </fragment>
     <fragment
         android:id="@+id/prefsFragment"
-        android:name="com.samudev.spotlog.preference.PrefsFragment"
+        android:name="com.developments.samu.spotlog.preference.PrefsFragment"
         android:label="Settings" />
 </navigation>

@@ -9,7 +9,7 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/song_list"
-        android:name="com.samudev.spotlog.history.HistoryFragment"
+        android:name="com.developments.com.spotlog.history.HistoryFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 

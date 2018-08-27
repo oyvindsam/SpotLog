@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable name="song" type="com.samudev.spotlog.data.Song"/>
+        <variable name="song" type="com.developments.samu.spotlog.data.Song"/>
         <variable name="clickListenerItem" type="android.view.View.OnClickListener"/>
         <variable name="clickListenerPlay" type="android.view.View.OnClickListener"/>
     </data>
