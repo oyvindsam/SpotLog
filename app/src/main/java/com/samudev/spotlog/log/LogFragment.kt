@@ -124,7 +124,6 @@ class LogFragment : Fragment() {
             menuInflater.inflate(R.menu.filter_songs, menu)
             setOnMenuItemClickListener { item ->
                 when (item.itemId) {
-                    R.id.one_minute -> viewModel.setLogFilter(LogTimeFilter.ONE_MINUTE)  // TODO: remove in production
                     R.id.one_hour -> viewModel.setLogFilter(LogTimeFilter.ONE_HOUR)
                     R.id.twelve_hours -> viewModel.setLogFilter(LogTimeFilter.TWELVE_HOURS)
                     else -> viewModel.setLogFilter(LogTimeFilter.ALL)

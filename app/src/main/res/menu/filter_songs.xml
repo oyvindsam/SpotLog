@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Only for testing -->
-    <item
-        android:id="@+id/one_minute"
-        android:title="@string/menu_filter_one_minute" />
     <item
         android:id="@+id/one_hour"
         android:title="@string/menu_filter_one_hour" />
