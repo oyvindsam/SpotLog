@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textSize="24sp"
-            android:text="No History!"/>
+            android:text="@string/no_history"/>
     </LinearLayout>
 
 </RelativeLayout>

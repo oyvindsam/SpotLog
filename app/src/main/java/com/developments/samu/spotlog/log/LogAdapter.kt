@@ -14,8 +14,8 @@ import com.developments.samu.spotlog.databinding.LogItemBinding
 import com.developments.samu.spotlog.utilities.playIntent
 import com.developments.samu.spotlog.utilities.toLocalDateTime
 import com.developments.samu.spotlog.utilities.toReadableString
+import org.threeten.bp.LocalDate
 import java.text.DateFormat.getDateInstance
-import java.time.LocalDate
 import java.util.*
 
 

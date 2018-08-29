@@ -11,7 +11,7 @@ android {
     buildToolsVersion '28.0.0'
     defaultConfig {
         applicationId "com.developments.samu.spotlog"
-        minSdkVersion 26
+        minSdkVersion 15
         targetSdkVersion 28
         versionCode 1
         versionName "0.0.1"
@@ -53,9 +53,12 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:$lifecycleVersion"
     implementation "com.android.support:preference-v7:$supportLibraryVersion"
 
-    //Navigation
+    // Navigation
     implementation "android.arch.navigation:navigation-fragment-ktx:$nav_version" // use -ktx for Kotlin
     implementation "android.arch.navigation:navigation-ui-ktx:$nav_version" // use -ktx for Kotlin
+
+    // Time
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.1.0'
 
     implementation 'com.google.dagger:dagger:2.16'
     kapt 'com.google.dagger:dagger-compiler:2.16'

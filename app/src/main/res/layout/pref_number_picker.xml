@@ -14,7 +14,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/pref_log_size_number_picker"
+        android:layout_toRightOf="@id/pref_log_size_number_picker"
         android:paddingStart="4dp"
+        android:paddingLeft="4dp"
         android:layout_centerVertical="true"
         android:text="@string/pref_log_size_hint"/>
 

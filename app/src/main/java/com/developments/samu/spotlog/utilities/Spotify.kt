@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
+import android.util.Log
 import com.developments.samu.spotlog.data.Song
 
 
@@ -23,16 +24,21 @@ class Spotify {
                 object : BroadcastReceiver() {
                     override fun onReceive(context: Context?, intent: Intent?) {
                         if (intent?.action == PLAYBACK_STATE_CHANGED) {
-                            val song = Song(
-                                    intent.getStringExtra("id"),
-                                    intent.getStringExtra("artist"),
-                                    intent.getStringExtra("album"),
-                                    intent.getStringExtra("track"),
-                                    intent.getIntExtra("length", 0),
-                                    System.currentTimeMillis()
-                            )
-                            if (song.trackId.isEmpty()) return
-                            callback(song)
+                            try {  // Do not trust Spotify. Ever.
+                                val song = Song(
+                                        intent.getStringExtra("id"),
+                                        intent.getStringExtra("artist"),
+                                        intent.getStringExtra("album"),
+                                        intent.getStringExtra("track"),
+                                        intent.getIntExtra("length", 0),
+                                        System.currentTimeMillis()
+                                )
+                                if (song.trackId.isEmpty()) return
+                                callback(song)
+                            } catch (e: IllegalStateException) {
+                                e.printStackTrace()
+                                Log.d("Spotify", "Intent has null field: ${intent.extras}")
+                            }
                         }
                     }
                 }

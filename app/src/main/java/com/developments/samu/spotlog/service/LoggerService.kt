@@ -4,6 +4,7 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
@@ -44,7 +45,7 @@ class LoggerService : Service() {
     private val notifPendingStop by lazy { PendingIntent.getService(this, 0, notifStopIntent, 0) }
     private val notifActionStop by lazy {
         NotificationCompat.Action.Builder(
-                R.drawable.ic_filter_list,
+                R.drawable.ic_clear,
                 getString(R.string.notif_action_title),
                 notifPendingStop)
                 .build()
@@ -137,17 +138,18 @@ class LoggerService : Service() {
 
         // Needs only to be called once (application startup)
         fun createNotificationChannel(context: Context) {
-            val channel = NotificationChannel(
-                    LoggerService.DEFAULT_CHANNEL,
-                    context.getString(R.string.notif_channel_name),
-                    NotificationManager.IMPORTANCE_LOW).apply {
-                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-                description = context.getString(R.string.notif_channel_description)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channel = NotificationChannel(
+                        LoggerService.DEFAULT_CHANNEL,
+                        context.getString(R.string.notif_channel_name),
+                        NotificationManager.IMPORTANCE_LOW).apply {
+                    lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+                    description = context.getString(R.string.notif_channel_description)
+                }
+                val service = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                service.createNotificationChannel(channel)
             }
-            val service = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            service.createNotificationChannel(channel)
         }
     }
-
 
 }

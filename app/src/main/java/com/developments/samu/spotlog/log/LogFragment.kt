@@ -85,7 +85,8 @@ class LogFragment : Fragment() {
                     .setTitle(getString(R.string.dialog_broadcast_title))
                     .setMessage(getString(R.string.dialog_broadcast_message))
                     .setPositiveButton(getString(R.string.dialog_broadcast_positive)) { dialog, key ->
-                        val intent = Intent(Intent.ACTION_APPLICATION_PREFERENCES)
+                        // Intent.ACTION_APPLICATION_PREFERENCES added in api 24. On API < 24 it will just open Spotify.
+                        val intent = Intent("android.intent.action.APPLICATION_PREFERENCES")
                         intent.`package` = Spotify.PACKAGE_NAME
                         startActivity(intent) }
                     .setNegativeButton(getString(R.string.dialog_broadcast_negative)) { dialog, key ->

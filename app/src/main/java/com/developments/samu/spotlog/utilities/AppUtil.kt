@@ -3,11 +3,11 @@ package com.developments.samu.spotlog.utilities
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import com.developments.samu.spotlog.preference.PrefsFragment
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
+import org.threeten.bp.Instant
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZoneId
+import org.threeten.bp.format.DateTimeFormatter
+import org.threeten.bp.format.FormatStyle
 
 /*
   Welcome to the class with the weird stuff.
@@ -36,4 +36,8 @@ fun Long.toLocalDateTime(): LocalDateTime =
 fun LocalDateTime.toReadableString(): String = this.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM))
 
 fun isPackageInstalled(packageName: String, packageManager: PackageManager?): Boolean =
-        packageManager?.getPackageInfo(packageName, 0) != null ?: false
+        try {
+            packageManager?.getPackageInfo(packageName, 0) != null ?: false
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        }

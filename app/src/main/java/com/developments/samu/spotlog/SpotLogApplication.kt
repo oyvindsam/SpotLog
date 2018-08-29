@@ -5,6 +5,7 @@ import com.developments.samu.spotlog.dependencyinjection.AppComponent
 import com.developments.samu.spotlog.dependencyinjection.ContextModule
 import com.developments.samu.spotlog.dependencyinjection.DaggerAppComponent
 import com.developments.samu.spotlog.service.LoggerService
+import com.jakewharton.threetenabp.AndroidThreeTen
 
 
 class SpotLogApplication : Application() {
@@ -19,6 +20,7 @@ class SpotLogApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         initDagger()
+        AndroidThreeTen.init(this)
         LoggerService.createNotificationChannel(this)
     }
 
