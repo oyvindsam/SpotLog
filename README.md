@@ -1,24 +1,25 @@
 ## SpotLog
 A simple **Spot**ify **Log**ger
 
-SpotLog can keep track of your recently played songs on Spotify so you
-don't have to. Ever listened to a hundreds of songs long playlist and
-suddenly Spotify crapped out and you lost your position? Enter SpotLog.
+[Play Store](https://play.google.com/store/apps/details?id=com.developments.samu.spotlog)
 
-In order to use SpotLog you need to manually enable 'Device Broadcast
-Status' in Spotify Settings. This will enable other apps on your phone
-to know which songs you are listening to.
 
+Ever been in the middle of a 500 songs long Spotify playlist and suddenly lost your position? Or do you often switch playlists and want to finish where you left off? With SpotLog you don't have to keep track manually, just open it to log the last played song or keep it running in the background. SpotLog is the next best thing to a bookmark feature in the Spotify app.
+
+Features:
+- Log songs when the app is open, or
+- Automatically log songs in background (enable in settings)
+- Play logged song in Spotify
+- QuickSettings tile for easy logging if you don't want background service running
+
+
+SpotLog has a very small footprint so it won't drain your battery. No permissions - no worries. 
+
+SpotLog needs 'Device Broadcast Status' to be enabled manually in Spotify settings to work.
 
 
 #### Backlog
-- Db transaksjoner async
-- Settings:
-    - Velge hvor mange sanger som blir lagret i loggen (db)
-    - Skru på/av backgroundservice/foreground.
-- Widget
-
-For framtiden
-- koble opp til spotify rest api
+- undo snackbar
+- connect to Spotify rest api (dl album images/direct play from app)
 
 
