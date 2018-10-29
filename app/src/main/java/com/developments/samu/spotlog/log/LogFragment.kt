@@ -15,6 +15,7 @@ import android.widget.PopupMenu
 import androidx.navigation.fragment.findNavController
 import com.developments.samu.spotlog.R
 import com.developments.samu.spotlog.SpotLogApplication
+import com.developments.samu.spotlog.data.toPrettyString
 import com.developments.samu.spotlog.databinding.LogFragmentBinding
 import com.developments.samu.spotlog.dependencyinjection.DaggerLogFragmentComponent
 import com.developments.samu.spotlog.preference.PrefsFragment.Companion.PREF_FIRST_LAUNCH
@@ -22,6 +23,7 @@ import com.developments.samu.spotlog.service.LoggerService
 import com.developments.samu.spotlog.utilities.Spotify
 import com.developments.samu.spotlog.utilities.applyPref
 import com.developments.samu.spotlog.utilities.isPackageInstalled
+import org.threeten.bp.LocalDate
 import javax.inject.Inject
 
 
@@ -90,7 +92,7 @@ class LogFragment : Fragment() {
                         intent.`package` = Spotify.PACKAGE_NAME
                         startActivity(intent) }
                     .setNegativeButton(getString(R.string.dialog_broadcast_negative)) { dialog, key ->
-                        dialog.cancel() }
+                        dialog.dismiss() }
                     .show()
         }
         else showSpotifyNotInstalledDialog()
@@ -101,7 +103,7 @@ class LogFragment : Fragment() {
                 .setTitle(getString(R.string.dialog_package_title))
                 .setMessage(getString(R.string.dialog_package_message))
                 .setNegativeButton(getString(R.string.dialog_package_negative)) { dialog, key ->
-                    dialog.cancel()
+                    dialog.dismiss()
                     activity?.finish()
                 }
                 .show()
@@ -116,8 +118,22 @@ class LogFragment : Fragment() {
             R.id.menu_clear -> viewModel.clearSongs()
             R.id.menu_settings -> findNavController().navigate(R.id.action_to_settings)
             R.id.menu_filter -> showFilteringPopUpMenu()
+            R.id.menu_export -> exportData()
         }
         return true
+    }
+
+    private fun exportData() {
+        val log = viewModel.songLog.value ?: return
+        val title = getString(R.string.share_title) + LocalDate.now()
+        val body = title + "\n\n" + log.toPrettyString()
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, title)
+            putExtra(Intent.EXTRA_TEXT, body)
+            putExtra(Intent.EXTRA_TITLE, title)
+        }
+        startActivity(Intent.createChooser(intent, getString(R.string.share_title_full)))
     }
 
     private fun showFilteringPopUpMenu() {

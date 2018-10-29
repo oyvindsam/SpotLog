@@ -13,9 +13,6 @@ class SpotLogTileService : TileService() {
 
     private val LOG_TAG: String = SpotLogTileService::class.java.simpleName
 
-    // TODO: Android kills service in ~1 min, make i foreground and optional in settings
-    // private val loggerServiceIntent by lazy { Intent(applicationContext, LoggerService::class.java) }
-
     @Inject
     lateinit var repository: SongRepository
     private val spotifyReceiver = Spotify.spotifyReceiver(::log)

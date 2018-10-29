@@ -28,7 +28,7 @@ class SongRepository @Inject constructor(val songDao: SongDao) {
     fun logSong(fromTime: Long, logSize: Int, song: Song, callback: ((Song) -> Unit)) {
         runOnIoThread {
             val recentSongs = songDao.getLatestNoLiveData(fromTime)
-            val lastSong = songDao.getLastLoggedSong()  // TODO: update logged song if not recent? might cause weird refresh in recyclerView
+            val lastSong = songDao.getLastLoggedSong()
             if (!(recentSongs.any { s -> s.trackId == song.trackId }) && lastSong?.trackId != song.trackId) {
                 songDao.deleteOld(logSize - 1)
                 songDao.insertSong(song)

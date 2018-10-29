@@ -13,7 +13,6 @@ private val LOG_TAG: String = LogActivity::class.java.simpleName
 
 class LogActivity : AppCompatActivity() {
 
-    // TODO: logging service should probably always be active when the app is open
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding: LogActivityBinding = DataBindingUtil.setContentView(this, R.layout.log_activity)

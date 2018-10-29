@@ -11,3 +11,9 @@ data class Song(
         @ColumnInfo(name = "track") val track: String,
         @ColumnInfo(name = "track_length") val trackLengthInSec: Int,
         @ColumnInfo(name = "registered_time") val registeredTime: Long)
+
+fun Song.toPrettyString() =
+        with (this) { "$track - $album - $artist"}
+
+fun List<Song>.toPrettyString() =
+        this.joinToString(separator = "\n") { song -> song.toPrettyString() }
