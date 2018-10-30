@@ -11,7 +11,7 @@ android {
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.developments.samu.spotlog"
-        minSdkVersion 15
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 3
         versionName "0.0.3"
