@@ -9,12 +9,19 @@ import android.content.SharedPreferences
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
+import android.support.design.widget.CoordinatorLayout
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
+import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.SimpleItemAnimator
+import android.util.Log
 import android.view.*
 import android.widget.PopupMenu
 import androidx.navigation.fragment.findNavController
 import com.developments.samu.spotlog.R
 import com.developments.samu.spotlog.SpotLogApplication
+import com.developments.samu.spotlog.data.Song
 import com.developments.samu.spotlog.data.toPrettyString
 import com.developments.samu.spotlog.databinding.LogFragmentBinding
 import com.developments.samu.spotlog.dependencyinjection.DaggerLogFragmentComponent
@@ -59,9 +66,14 @@ class LogFragment : Fragment() {
         initDagger()
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(SongLogViewModel::class.java)
 
-        val adapter = LogAdapter(swipeCallback = { song -> viewModel.removeSong(song) })
+        val adapter = LogAdapter(swipeCallback = {
+            song -> viewModel.removeSong(song)
+            Snackbar.make(binding.root, getString(R.string.action_song_deleted), Snackbar.LENGTH_SHORT).apply {
+                setAction(R.string.action_undo) { _ -> viewModel.insertSong(song) }
+            }.show()
+        })
+
         binding.songList.adapter = adapter
-        // Init list
 
         viewModel.run {
             songLog.observe(viewLifecycleOwner, Observer { songs ->
@@ -72,6 +84,7 @@ class LogFragment : Fragment() {
             isEmptyLog.observe(viewLifecycleOwner, Observer { isEmpty ->
                 if (isEmpty != null) {
                     binding.noHistoryTextView.visibility = if (isEmpty) View.VISIBLE else View.GONE
+                    binding.songList.visibility = if (isEmpty) View.GONE else View.VISIBLE
                 }
             })
         }
@@ -115,7 +128,7 @@ class LogFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_clear -> viewModel.clearSongs()
+            R.id.menu_clear -> clearLog()
             R.id.menu_settings -> findNavController().navigate(R.id.action_to_settings)
             R.id.menu_filter -> showFilteringPopUpMenu()
             R.id.menu_export -> exportData()
@@ -123,9 +136,27 @@ class LogFragment : Fragment() {
         return true
     }
 
+    private fun clearLog() {
+        viewModel.showLog(false)  // log is deleted if snackbar is dismissed
+        Snackbar.make(binding.root, getString(R.string.action_log_cleared), Snackbar.LENGTH_LONG).apply {
+            Log.d(LOG_TAG, "view: ${binding.root}")
+            setAction(getString(R.string.action_undo)) { viewModel.showLog(true) }
+            addCallback(object: Snackbar.Callback() {
+                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                    when (event) {
+                        Snackbar.Callback.DISMISS_EVENT_TIMEOUT -> viewModel.clearSongs()
+                        else ->  viewModel.showLog(true)
+                    }
+                    super.onDismissed(transientBottomBar, event)
+                }
+            })
+        }.show()
+
+    }
+
     private fun exportData() {
         val log = viewModel.songLog.value ?: return
-        val title = getString(R.string.share_title) + LocalDate.now()
+        val title = getString(R.string.share_title) + " " + LocalDate.now()
         val body = title + "\n\n" + log.toPrettyString()
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"

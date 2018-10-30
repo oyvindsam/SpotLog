@@ -12,6 +12,8 @@
         android:name="com.developments.com.spotlog.history.HistoryFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="true"
 
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         tools:context=".log.LogFragment"

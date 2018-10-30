@@ -23,6 +23,7 @@ class SongLogViewModel @Inject constructor(private val songRepository: SongRepos
         // Kinda obsolete, as the datasource never changes, only new values are added.
         // A more sane way to do this is to always call getSongLatest and implicitly filter based on logFilter value..
         val filteredSongLog = Transformations.switchMap(logFilter) {
+            if (it == LogTimeFilter.NONE) MutableLiveData<List<Song>>()
             if (it == LogTimeFilter.ALL) songRepository.getSongsAll()
             else songRepository.getSongsLatest(it)
         }
@@ -41,11 +42,17 @@ class SongLogViewModel @Inject constructor(private val songRepository: SongRepos
         get() = _isEmptyLog
 
     fun removeSong(song: Song) = songRepository.removeSong(song)
+    fun insertSong(song: Song) = songRepository.saveSong(song)
 
     fun clearSongs() = songRepository.clearSongs()
+    fun showLog(show: Boolean) {
+        if (show) setLogFilter(LogTimeFilter.ALL)
+        else setLogFilter(LogTimeFilter.NONE)
+    }
 
     fun setLogFilter(value: Long) {
         logFilter.value = when (value) {
+            LogTimeFilter.NONE -> LogTimeFilter.NONE
             LogTimeFilter.ONE_MINUTE -> LogTimeFilter.ONE_MINUTE
             LogTimeFilter.ONE_HOUR -> LogTimeFilter.ONE_HOUR
             LogTimeFilter.TWELVE_HOURS -> LogTimeFilter.TWELVE_HOURS

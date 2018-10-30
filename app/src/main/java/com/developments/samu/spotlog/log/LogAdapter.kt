@@ -1,13 +1,16 @@
 package com.developments.samu.spotlog.log
 
 
+import android.support.design.widget.Snackbar
 import android.support.v7.recyclerview.extensions.ListAdapter
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.developments.samu.spotlog.R
 import com.developments.samu.spotlog.data.Song
 import com.developments.samu.spotlog.databinding.LogHeaderBinding
 import com.developments.samu.spotlog.databinding.LogItemBinding
