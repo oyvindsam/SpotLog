@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
+import android.util.Log
 import com.developments.samu.spotlog.R
 import com.developments.samu.spotlog.SpotLogApplication
 import com.developments.samu.spotlog.data.Song
@@ -18,6 +19,7 @@ import com.developments.samu.spotlog.preference.PrefsFragment
 import com.developments.samu.spotlog.utilities.Spotify
 import com.developments.samu.spotlog.utilities.getIntOrDefault
 import com.developments.samu.spotlog.utilities.minutesToMillis
+import java.lang.IllegalStateException
 import javax.inject.Inject
 
 
@@ -75,7 +77,7 @@ class LoggerService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when(intent?.action) {
-            LoggerService.ACTION_STOP -> { stopSelf(); notificationIsActive = false; }
+            LoggerService.ACTION_STOP -> stopSelf()  // onDestroy called.. variable over is not necessary?
             LoggerService.ACTION_START_FOREGROUND -> startService(true)
             LoggerService.ACTION_START_BACKGROUND -> startService(false)
         }
@@ -103,7 +105,6 @@ class LoggerService : Service() {
         val logSize = prefs.getIntOrDefault(PrefsFragment.PREF_LOG_SIZE_KEY)
         val fromTime = System.currentTimeMillis() - prefs.getIntOrDefault(PrefsFragment.PREF_TIMEOUT_KEY).minutesToMillis()
         repository.logSong(fromTime, logSize, song, ::notifySongLogged)
-
     }
 
     private fun notifySongLogged(song: Song?) {
@@ -114,7 +115,7 @@ class LoggerService : Service() {
 
     override fun onDestroy() {
         try {
-            // Throws if not started
+            // Throws if not started. onDestroy is called when stopService is called from outside
             unregisterReceiver(spotifyReceiver)
         } catch (e: Exception) {}
         super.onDestroy()
@@ -130,11 +131,6 @@ class LoggerService : Service() {
         const val ACTION_STOP = "STOP_SERVICE"
         const val DEFAULT_CHANNEL = "SPOTLOG_DEFAULT_CHANNEL"
         const val NOTIFICATION_ID = 3245
-
-
-        fun getNotification(context: Context) {
-
-        }
 
         // Needs only to be called once (application startup)
         fun createNotificationChannel(context: Context) {

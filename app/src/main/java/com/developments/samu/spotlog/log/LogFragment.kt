@@ -31,6 +31,7 @@ import com.developments.samu.spotlog.utilities.Spotify
 import com.developments.samu.spotlog.utilities.applyPref
 import com.developments.samu.spotlog.utilities.isPackageInstalled
 import org.threeten.bp.LocalDate
+import java.lang.IllegalStateException
 import javax.inject.Inject
 
 
@@ -190,11 +191,11 @@ class LogFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        // Stop backgroundservice in fragment
-        context?.stopService(loggerServiceIntentBackground)
-        // if foregroundservice is turned ON.. turn it on
-        if (prefs.getBoolean(getString(R.string.pref_foreground_key), false)) context?.startService(loggerServiceIntentForeground)
-        else context?.stopService(loggerServiceIntentForeground)
+        if (prefs.getBoolean(getString(R.string.pref_foreground_key), false)) {
+            context?.startService(loggerServiceIntentForeground)
+        }
+        else context?.stopService(loggerServiceIntentBackground)
+
     }
 
     private fun initDagger() {
