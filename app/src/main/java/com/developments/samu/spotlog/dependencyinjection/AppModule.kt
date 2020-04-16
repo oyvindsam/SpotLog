@@ -23,7 +23,7 @@ class AppModule {
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
         return Room
                 .databaseBuilder(context, AppDatabase::class.java, "song-history-db")
-                .addMigrations(AppDatabase.MIGRATION_1_2())
+                .addMigrations(AppDatabase.MIGRATION_1_2(), AppDatabase.MIGRATION_2_3())
                 .build()
     }
 
