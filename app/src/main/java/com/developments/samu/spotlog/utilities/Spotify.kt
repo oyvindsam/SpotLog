@@ -25,13 +25,24 @@ class Spotify {
                     override fun onReceive(context: Context?, intent: Intent?) {
                         if (intent?.action == PLAYBACK_STATE_CHANGED) {
                             try {  // Do not trust Spotify. Ever.
+                                val id = intent.getStringExtra("id")
+                                val artist = intent.getStringExtra("artist")
+                                val album = intent.getStringExtra("album")
+                                val track = intent.getStringExtra("track")
+                                val playbackPosition = intent.getIntExtra("playbackPosition", 0)
+                                val length = intent.getIntExtra("length", 0)
+                                val timeLeft = toMinLeft(length, playbackPosition)
+
+                                if (id == null || artist == null || album == null || track == null) return
+
                                 val song = Song(
-                                        intent.getStringExtra("id"),
-                                        intent.getStringExtra("artist"),
-                                        intent.getStringExtra("album"),
-                                        intent.getStringExtra("track"),
-                                        intent.getIntExtra("length", 0),
-                                        System.currentTimeMillis()
+                                        id,
+                                        artist,
+                                        album,
+                                        track,
+                                        length,
+                                        System.currentTimeMillis(),
+                                        timeLeft
                                 )
                                 Log.d("Spotify", "song logged: $song")
                                 if (song.trackId.isEmpty()) return

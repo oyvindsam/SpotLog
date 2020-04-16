@@ -29,9 +29,11 @@ class LogAdapter(private val swipeCallback: ((Song) -> Unit))
                         LayoutInflater.from(parent.context), parent, false))
                 ListItem.TYPE_NORMAL -> SongViewHolder(LogItemBinding.inflate(
                         LayoutInflater.from(parent.context), parent, false).apply {
-                    titleText.setSingleLine(true)  // Setting this in XML would cause a 'W/StaticLayout: maxLineHeight should not be -1' warning,
-                    artistText.setSingleLine(true)  // and make the app skip frames when scrolling
-                    albumText.setSingleLine(true)
+                    titleText.isSingleLine = true  // Setting this in XML would cause a 'W/StaticLayout: maxLineHeight should not be -1' warning,
+                    artistText.isSingleLine = true  // and make the app skip frames when scrolling
+                    albumText.isSingleLine = true
+                    timeText.isSingleLine = true
+
                 })
                 else -> throw IllegalArgumentException("unknown viewType: $viewType")
             }

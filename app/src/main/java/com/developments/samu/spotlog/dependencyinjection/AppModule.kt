@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.developments.samu.spotlog.data.AppDatabase
+import com.developments.samu.spotlog.data.AppDatabase.Companion.MIGRATION_2_3
 import com.developments.samu.spotlog.data.SongDao
 import dagger.Module
 import dagger.Provides

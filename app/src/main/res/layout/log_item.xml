@@ -70,7 +70,7 @@
                 style="@style/SongExtra"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{song.track}"
+                android:text="@{song.playbackPosition}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/artist_text"
                 app:layout_constraintTop_toBottomOf="@+id/artist_text"
