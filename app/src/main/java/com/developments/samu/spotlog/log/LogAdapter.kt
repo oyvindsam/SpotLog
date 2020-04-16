@@ -1,16 +1,14 @@
 package com.developments.samu.spotlog.log
 
 
-import com.google.android.material.snackbar.Snackbar
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.ItemTouchHelper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.developments.samu.spotlog.R
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.developments.samu.spotlog.data.Song
 import com.developments.samu.spotlog.databinding.LogHeaderBinding
 import com.developments.samu.spotlog.databinding.LogItemBinding
@@ -87,9 +85,11 @@ class LogAdapter(private val swipeCallback: ((Song) -> Unit))
             is SongItem -> {
                 val song = item.song
                 (holder as SongViewHolder).apply {
-                    bind(View.OnClickListener { Toast.makeText(it.context,
-                            "${song.track} was logged ${song.registeredTime.toLocalDateTime().toReadableString()}",
-                            Toast.LENGTH_SHORT).show() },
+                    bind(View.OnClickListener {
+                        Log.d("log", "yep. logged1111111111111111111111111111111111111111")
+                        Toast.makeText(it.context,
+                                "${song.track} was logged ${song.registeredTime.toLocalDateTime().toReadableString()}",
+                                Toast.LENGTH_SHORT).show() },
                             View.OnClickListener { it.context.startActivity(song.playIntent()) },
                             song)
                     itemView.tag = song
@@ -113,7 +113,7 @@ class LogAdapter(private val swipeCallback: ((Song) -> Unit))
         }
     }
 
-    class HeaderViewHolder(private val binding: LogHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class HeaderViewHolder(private val binding: LogHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: LocalDate) {
             binding.apply {
                 date = getDateInstance().format(Date(item.toEpochDay() * 60*60*24*1000))  // TODO: Fix this date mess

@@ -2,7 +2,8 @@ package com.developments.samu.spotlog.preference
 
 import android.os.Parcel
 import android.os.Parcelable
-import android.preference.Preference
+import androidx.preference.Preference
+
 
 // copied from https://developer.android.com/guide/topics/ui/settings#Custom
 class SavedState : Preference.BaseSavedState {

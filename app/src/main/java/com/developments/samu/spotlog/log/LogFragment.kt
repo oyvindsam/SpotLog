@@ -1,27 +1,21 @@
 package com.developments.samu.spotlog.log
 
 import android.app.AlertDialog
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.google.android.material.snackbar.Snackbar
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SimpleItemAnimator
 import android.util.Log
 import android.view.*
 import android.widget.PopupMenu
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.developments.samu.spotlog.R
 import com.developments.samu.spotlog.SpotLogApplication
-import com.developments.samu.spotlog.data.Song
 import com.developments.samu.spotlog.data.toPrettyString
 import com.developments.samu.spotlog.databinding.LogFragmentBinding
 import com.developments.samu.spotlog.dependencyinjection.DaggerLogFragmentComponent
@@ -30,8 +24,9 @@ import com.developments.samu.spotlog.service.LoggerService
 import com.developments.samu.spotlog.utilities.Spotify
 import com.developments.samu.spotlog.utilities.applyPref
 import com.developments.samu.spotlog.utilities.isPackageInstalled
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import org.threeten.bp.LocalDate
-import java.lang.IllegalStateException
 import javax.inject.Inject
 
 
@@ -65,7 +60,7 @@ class LogFragment : Fragment() {
 
         super.onActivityCreated(savedInstanceState)
         initDagger()
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(SongLogViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(SongLogViewModel::class.java)
 
         val adapter = LogAdapter(swipeCallback = {
             song -> viewModel.removeSong(song)
@@ -100,12 +95,12 @@ class LogFragment : Fragment() {
             AlertDialog.Builder(context)
                     .setTitle(getString(R.string.dialog_broadcast_title))
                     .setMessage(getString(R.string.dialog_broadcast_message))
-                    .setPositiveButton(getString(R.string.dialog_broadcast_positive)) { dialog, key ->
+                    .setPositiveButton(getString(R.string.dialog_broadcast_positive)) { _, _ ->
                         // Intent.ACTION_APPLICATION_PREFERENCES added in api 24. On API < 24 it will just open Spotify.
                         val intent = Intent("android.intent.action.APPLICATION_PREFERENCES")
                         intent.`package` = Spotify.PACKAGE_NAME
                         startActivity(intent) }
-                    .setNegativeButton(getString(R.string.dialog_broadcast_negative)) { dialog, key ->
+                    .setNegativeButton(getString(R.string.dialog_broadcast_negative)) { dialog, _ ->
                         dialog.dismiss() }
                     .show()
         }
@@ -116,19 +111,19 @@ class LogFragment : Fragment() {
         AlertDialog.Builder(context)
                 .setTitle(getString(R.string.dialog_package_title))
                 .setMessage(getString(R.string.dialog_package_message))
-                .setNegativeButton(getString(R.string.dialog_package_negative)) { dialog, key ->
+                .setNegativeButton(getString(R.string.dialog_package_negative)) { dialog, _ ->
                     dialog.dismiss()
                     activity?.finish()
                 }
                 .show()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.log_fragment_menu, menu)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.log_fragment_menu, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.menu_clear -> clearLog()
             R.id.menu_settings -> findNavController().navigate(R.id.action_to_settings)
             R.id.menu_filter -> showFilteringPopUpMenu()
@@ -145,7 +140,7 @@ class LogFragment : Fragment() {
             addCallback(object: Snackbar.Callback() {
                 override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                     when (event) {
-                        Snackbar.Callback.DISMISS_EVENT_TIMEOUT -> viewModel.clearSongs()
+                        BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_TIMEOUT -> viewModel.clearSongs()
                         else ->  viewModel.showLog(true)
                     }
                     super.onDismissed(transientBottomBar, event)

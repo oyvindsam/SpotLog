@@ -36,7 +36,7 @@ class PrefsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPref
             is TimeoutPreference -> {
                 TimeoutPickerDialogFrag.newInstance(preference).also {
                     it.setTargetFragment(this, 0)
-                    it.show(fragmentManager, "android.support.v7.preference.PreferenceFragment.DIALOG")
+                    it.show(parentFragmentManager, "android.support.v7.preference.PreferenceFragment.DIALOG")
                 }
             }
             else -> super.onDisplayPreferenceDialog(preference)

@@ -3,7 +3,7 @@ package com.developments.samu.spotlog.dependencyinjection
 import androidx.room.Room
 import android.content.Context
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import com.developments.samu.spotlog.data.AppDatabase
 import com.developments.samu.spotlog.data.SongDao
 import dagger.Module
