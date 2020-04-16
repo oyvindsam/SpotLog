@@ -1,7 +1,7 @@
 package com.developments.samu.spotlog.data
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
+import androidx.room.ColumnInfo
+import androidx.room.Entity
 
 @Entity(primaryKeys = ["track_id", "registered_time"])
 data class Song(

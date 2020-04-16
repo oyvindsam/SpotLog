@@ -1,10 +1,10 @@
 package com.developments.samu.spotlog.log
 
 
-import android.support.design.widget.Snackbar
-import android.support.v7.recyclerview.extensions.ListAdapter
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
+import com.google.android.material.snackbar.Snackbar
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ItemTouchHelper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -31,9 +31,9 @@ class LogAdapter(private val swipeCallback: ((Song) -> Unit))
                         LayoutInflater.from(parent.context), parent, false))
                 ListItem.TYPE_NORMAL -> SongViewHolder(LogItemBinding.inflate(
                         LayoutInflater.from(parent.context), parent, false).apply {
-                    songTrack.setSingleLine(true)  // Setting this in XML would cause a 'W/StaticLayout: maxLineHeight should not be -1' warning,
-                    songAlbum.setSingleLine(true)  // and make the app skip frames when scrolling
-                    songArtist.setSingleLine(true)
+                    titleText.setSingleLine(true)  // Setting this in XML would cause a 'W/StaticLayout: maxLineHeight should not be -1' warning,
+                    artistText.setSingleLine(true)  // and make the app skip frames when scrolling
+                    albumText.setSingleLine(true)
                 })
                 else -> throw IllegalArgumentException("unknown viewType: $viewType")
             }

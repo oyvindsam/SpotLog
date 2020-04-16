@@ -1,6 +1,6 @@
 package com.developments.samu.spotlog.dependencyinjection
 
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider
 import android.content.SharedPreferences
 import com.developments.samu.spotlog.data.SongRepository
 import com.developments.samu.spotlog.preference.PrefsFragment

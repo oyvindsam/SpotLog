@@ -1,6 +1,6 @@
 package com.developments.samu.spotlog.data
 
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.LiveData
 import com.developments.samu.spotlog.utilities.runOnIoThread
 import javax.inject.Inject
 

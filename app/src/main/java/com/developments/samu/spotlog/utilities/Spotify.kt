@@ -33,6 +33,7 @@ class Spotify {
                                         intent.getIntExtra("length", 0),
                                         System.currentTimeMillis()
                                 )
+                                Log.d("Spotify", "song logged: $song")
                                 if (song.trackId.isEmpty()) return
                                 callback(song)
                             } catch (e: IllegalStateException) {

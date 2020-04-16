@@ -16,8 +16,8 @@
 
 package com.developments.samu.spotlog.dependencyinjection
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.developments.samu.spotlog.log.SongLogViewModel
 import com.developments.samu.spotlog.viewmodels.SongLogViewModelFactory
 import dagger.Binds

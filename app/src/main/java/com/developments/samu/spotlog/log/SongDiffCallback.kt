@@ -1,6 +1,6 @@
 package com.developments.samu.spotlog.log
 
-import android.support.v7.util.DiffUtil
+import androidx.recyclerview.widget.DiffUtil
 import com.developments.samu.spotlog.log.LogAdapter.*
 
 

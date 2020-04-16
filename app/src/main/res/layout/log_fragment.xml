@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/song_list"
         android:name="com.developments.com.spotlog.history.HistoryFragment"
         android:layout_width="match_parent"
@@ -15,11 +15,11 @@
         android:scrollbars="vertical"
         android:fadeScrollbars="true"
 
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:context=".log.LogFragment"
         tools:listitem="@layout/log_item">
 
-    </android.support.v7.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
     <LinearLayout
         android:layout_width="wrap_content"

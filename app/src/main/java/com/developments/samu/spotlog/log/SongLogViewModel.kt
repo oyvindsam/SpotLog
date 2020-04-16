@@ -1,6 +1,6 @@
 package com.developments.samu.spotlog.log
 
-import android.arch.lifecycle.*
+import androidx.lifecycle.*
 import android.content.SharedPreferences
 import com.developments.samu.spotlog.data.Song
 import com.developments.samu.spotlog.data.SongRepository
