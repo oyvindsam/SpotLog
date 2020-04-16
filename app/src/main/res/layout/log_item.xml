@@ -23,8 +23,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
+            android:layout_height="match_parent"
+            android:onClick="@{clickListenerItem}">
 
             <TextView
                 android:id="@+id/title_text"
@@ -64,7 +64,6 @@
                 app:layout_constraintStart_toEndOf="@+id/artist_text"
                 tools:singleLine="true"
                 tools:text="Album name oh wow such looooooooongggggggggg" />
-
 
             <TextView
                 android:id="@+id/time_text"
