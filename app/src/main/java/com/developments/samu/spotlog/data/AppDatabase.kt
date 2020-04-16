@@ -31,7 +31,7 @@ abstract class AppDatabase : RoomDatabase() {
         fun MIGRATION_2_3(): Migration {
             return object: Migration(2, 3) {
                 override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("ALTER TABLE `Song` ADD COLUMN `playback_position` STRING DEFAULT `` NOT NULL")
+                    database.execSQL("ALTER TABLE `Song` ADD COLUMN `playback_position` TEXT NOT NULL DEFAULT `-`")
                 }
             }
         }
