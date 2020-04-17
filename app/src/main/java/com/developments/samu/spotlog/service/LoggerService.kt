@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import android.util.Log
 import com.developments.samu.spotlog.R
 import com.developments.samu.spotlog.SpotLogApplication
 import com.developments.samu.spotlog.data.Song
@@ -19,7 +18,6 @@ import com.developments.samu.spotlog.preference.PrefsFragment
 import com.developments.samu.spotlog.utilities.Spotify
 import com.developments.samu.spotlog.utilities.getIntOrDefault
 import com.developments.samu.spotlog.utilities.minutesToMillis
-import java.lang.IllegalStateException
 import javax.inject.Inject
 
 
@@ -37,14 +35,23 @@ class LoggerService : Service() {
 
     private val spotifyReceiver = Spotify.spotifyReceiver(::log)
 
-    private val notifTapIntent by lazy { Intent(this, LogActivity::class.java).apply {
-        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP} }
-    private val notifStopIntent by lazy { Intent(this, LoggerService::class.java).apply {
-        action = LoggerService.ACTION_STOP
-    } }
+    private val notifPendingIntent by lazy { PendingIntent.getActivity(
+            this,
+            0,
+            Intent(this, LogActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP},
+            0) }
 
-    private val notifPendingIntent by lazy { PendingIntent.getActivity(this, 0, notifTapIntent, 0) }
-    private val notifPendingStop by lazy { PendingIntent.getService(this, 0, notifStopIntent, 0) }
+    private val notifPendingStop by lazy {
+        PendingIntent.getService(
+                this,
+                0,
+                Intent(this, LoggerService::class.java).apply {
+                    action = LoggerService.ACTION_STOP
+                },
+                0)
+    }
+
     private val notifActionStop by lazy {
         NotificationCompat.Action.Builder(
                 R.drawable.ic_clear,
@@ -53,11 +60,10 @@ class LoggerService : Service() {
                 .build()
     }
 
-    private val notification by lazy {
-        NotificationCompat.Builder(this, LoggerService.DEFAULT_CHANNEL)  // Default channel needs to be set up before adding notification
+    private val notificationBuilder by lazy {
+        NotificationCompat.Builder(this, LoggerService.DEFAULT_CHANNEL)
                 .setSmallIcon(R.drawable.ic_tile_log_track)
                 .setContentTitle(getString(R.string.notif_content_title))
-                //.setContentText(getString(R.string.notif_content_text))
                 .setContentIntent(notifPendingIntent)
                 .addAction(notifActionStop)
     }
@@ -95,7 +101,7 @@ class LoggerService : Service() {
     // start foreground service and check for latest logged song to put in notification content text.
     private fun startForegroundNotif() {
         notificationIsActive = true
-        startForeground(LoggerService.NOTIFICATION_ID, notification.build())
+        startForeground(LoggerService.NOTIFICATION_ID, notificationBuilder.build())
         repository.getLastLoggedSong(::notifySongLogged)
     }
 
@@ -109,8 +115,9 @@ class LoggerService : Service() {
 
     private fun notifySongLogged(song: Song?) {
         if (!notificationIsActive || song == null) return  // check if notification is currently active
-        notification.setContentTitle("${song.track} - ${song.artist}")
-        NotificationManagerCompat.from(this).notify(LoggerService.NOTIFICATION_ID, notification.build())
+        notificationBuilder.setContentTitle("${song.track} - ${song.artist}")
+        notificationBuilder.setContentText("${song.playbackPosition}")
+        NotificationManagerCompat.from(this).notify(LoggerService.NOTIFICATION_ID, notificationBuilder.build())
     }
 
     override fun onDestroy() {
