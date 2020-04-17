@@ -1,22 +1,5 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="Toolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
     <style name="SongTitle">
         <item name="android:textSize">16sp</item>
         <item name="android:ellipsize">end</item>
@@ -25,7 +8,6 @@
 
     <style name="SongExtra">
         <item name="android:textSize">14sp</item>
-        <item name="android:color">#666666</item>
         <item name="android:ellipsize">end</item>
         <item name="android:textAppearance">?attr/textAppearanceListItem</item>
     </style>

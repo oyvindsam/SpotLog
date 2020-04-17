@@ -117,7 +117,7 @@ class LogFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.log_fragment_menu, menu)
+        inflater.inflate(R.menu.log_menu, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
