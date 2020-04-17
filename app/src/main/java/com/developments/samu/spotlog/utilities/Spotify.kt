@@ -42,7 +42,6 @@ class Spotify {
                                             timeSent,
                                             playbackPosition
                                     )
-                                    Log.d("Spotify", "broadcast receiver: $song")
                                     callback(song)
                                 }
                             }

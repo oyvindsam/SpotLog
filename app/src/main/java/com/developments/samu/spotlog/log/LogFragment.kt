@@ -10,7 +10,6 @@ import android.view.*
 import android.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -35,7 +34,6 @@ private val LOG_TAG: String = LogFragment::class.java.simpleName
 class LogFragment : Fragment() {
 
     // starts same service, just different action
-    private val loggerServiceIntentBackground by lazy { Intent(LoggerService.ACTION_START_BACKGROUND, Uri.EMPTY, context, LoggerService::class.java) }
     private val loggerServiceIntentForeground by lazy { Intent(LoggerService.ACTION_START_FOREGROUND, Uri.EMPTY, context, LoggerService::class.java) }
 
     @Inject
@@ -180,17 +178,15 @@ class LogFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        context?.startService(loggerServiceIntentBackground)
+        context?.startService(loggerServiceIntentForeground)
         viewModel.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        if (prefs.getBoolean(getString(R.string.pref_foreground_key), false)) {
-            context?.startService(loggerServiceIntentForeground)
+        if (!prefs.getBoolean(getString(R.string.pref_foreground_key), false)) {
+            context?.stopService(loggerServiceIntentForeground)
         }
-        else context?.stopService(loggerServiceIntentBackground)
-
     }
 
     private fun initDagger() {

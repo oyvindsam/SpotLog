@@ -23,4 +23,13 @@ fun Song.toPositionPrettyString() =
 fun List<Song>.toPrettyString() =
         this.joinToString(separator = "\n") { song -> song.toPrettyString() }
 
+// TODO: should probably put this in a preference. reuse timepicker dialog?
+val MAGIC_NUMBER_PLAYTIME = 1000
+
+// Helper method to see if this song is "newer" -> playtime has changed (significantly, set by MAGIC_NUMBER_PLAYTIME)
+fun Song.sameButNewPosition(other: Song): Boolean {
+    return this.trackId == other.trackId &&
+            this.playbackPosition - other.playbackPosition > MAGIC_NUMBER_PLAYTIME
+}
+
 

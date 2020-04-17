@@ -1,6 +1,5 @@
 package com.developments.samu.spotlog.data
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.developments.samu.spotlog.utilities.runOnIoThread
 import javax.inject.Inject
@@ -18,31 +17,26 @@ class SongRepository @Inject constructor(val songDao: SongDao) {
 
     fun getSongsAll(): LiveData<List<Song>> =  songDao.getAll()
 
-    fun getLastLoggedSong(callback: ((Song?) -> Unit)) {
+    fun getLastLoggedSong(callback: ((Song) -> Unit)) {
         runOnIoThread {
-            lastLogged = songDao.getLastLoggedSong()
-            callback(lastLogged)
+            songDao.getLastLoggedSong()?.let { callback(it) }
         }
     }
-    // TODO: should probably put this in a preference. reuse timepicker dialog?
-    val MAGIC_NUMBER_PLAYTIME = 1000
+
     // log song if it is not recently logged or is last logged song
     fun logSong(logSize: Int, song: Song, callback: ((Song) -> Unit)) {
-        Log.d(LOG_TAG, "$song")
         runOnIoThread {
             val lastSong = songDao.getLastLoggedSong()
             if (song.trackId != lastSong?.trackId) {
-                Log.d(LOG_TAG, "song will be saved to db")
                 songDao.deleteOld(logSize - 1)
                 songDao.insertSong(song)
                 callback(song)
             }
             // check if new playback position is bigger than
-            else if (song.timeSent != lastSong.timeSent &&
-                    song.playbackPosition - lastSong.playbackPosition > MAGIC_NUMBER_PLAYTIME) {
-                removeSong(lastSong)
-                saveSong(song)
-
+            else if (song.sameButNewPosition(lastSong)) {
+                songDao.deleteSong(lastSong)
+                songDao.insertSong(song)
+                callback(song)
             }
         }
     }

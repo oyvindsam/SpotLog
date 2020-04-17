@@ -13,9 +13,9 @@ import com.developments.samu.spotlog.R
 import com.developments.samu.spotlog.SpotLogApplication
 import com.developments.samu.spotlog.data.Song
 import com.developments.samu.spotlog.data.SongRepository
+import com.developments.samu.spotlog.data.sameButNewPosition
 import com.developments.samu.spotlog.data.toPositionPrettyString
 import com.developments.samu.spotlog.log.LogActivity
-import com.developments.samu.spotlog.log.LogFragment
 import com.developments.samu.spotlog.preference.PrefsFragment
 import com.developments.samu.spotlog.utilities.Spotify
 import com.developments.samu.spotlog.utilities.getIntOrDefault
@@ -32,7 +32,7 @@ import javax.inject.Inject
  */
 class LoggerService : Service() {
 
-    private val LOG_TAG: String = LogFragment::class.java.simpleName
+    private val LOG_TAG: String = LoggerService::class.java.simpleName
 
     private val spotifyReceiver = Spotify.spotifyReceiver(::log)
 
@@ -76,7 +76,6 @@ class LoggerService : Service() {
     @Inject
     lateinit var prefs: SharedPreferences
 
-    private var notificationIsActive = false
     private var lastSong = Song(
             "",
             "",
@@ -94,38 +93,37 @@ class LoggerService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when(intent?.action) {
             LoggerService.ACTION_STOP -> stopSelf()  // onDestroy called.. variable over is not necessary?
-            LoggerService.ACTION_START_FOREGROUND -> startService(true)
-            LoggerService.ACTION_START_BACKGROUND -> startService(false)
+            LoggerService.ACTION_START_FOREGROUND -> startService()
         }
         return START_STICKY
     }
 
     // start backgroundReceiver. Start foreground service if specified
-    private fun startService(foreground: Boolean) {
+    private fun startService() {
+        if (running) return
+        running = true
         registerReceiver(spotifyReceiver, Spotify.INTENT_FILTER)  // start backgroundReceiver for picking up Spotify intents
-        if (foreground) startForegroundNotif()
-        else stopForeground(true)  // remove notification
-        notificationIsActive = foreground
+        startForegroundNotif()
     }
 
     // start foreground service and check for latest logged song to put in notification content text.
     private fun startForegroundNotif() {
-        notificationIsActive = true
         startForeground(LoggerService.NOTIFICATION_ID, notificationBuilder.build())
-        repository.getLastLoggedSong(::notifySongLogged)
+        repository.getLastLoggedSong(::log)
     }
 
     private fun log(song: Song) {
-        // check early to prevent db scan
-        Log.d(LOG_TAG, "lastsong: $lastSong")
-        if (song.trackId == lastSong.trackId && song.timeSent == lastSong.timeSent) return
-        val logSize = prefs.getIntOrDefault(PrefsFragment.PREF_LOG_SIZE_KEY)
-        repository.logSong(logSize, song, ::notifySongLogged)
-        lastSong = song  // keep track of the last logged song
+        // first init after service created
+        if (lastSong.trackId == "") lastSong = song
+
+        if (song.trackId != lastSong.trackId || song.sameButNewPosition(lastSong)) {
+            val logSize = prefs.getIntOrDefault(PrefsFragment.PREF_LOG_SIZE_KEY)
+            repository.logSong(logSize, song, ::notifySongLogged)
+            lastSong = song
+        }
     }
 
-    private fun notifySongLogged(song: Song?) {
-        if (!notificationIsActive || song == null) return  // check if notification is currently active
+    private fun notifySongLogged(song: Song) {
         notificationBuilder.apply {
             setContentTitle("${song.track} - ${song.artist}")
             setContentText(song.toPositionPrettyString())
@@ -139,6 +137,7 @@ class LoggerService : Service() {
             // Throws if not started. onDestroy is called when stopService is called from outside
             unregisterReceiver(spotifyReceiver)
         } catch (e: Exception) {}
+        running = false
         super.onDestroy()
     }
 
@@ -148,8 +147,11 @@ class LoggerService : Service() {
 
     companion object {
         const val ACTION_START_FOREGROUND = "START_FOREGROUND"
-        const val ACTION_START_BACKGROUND = "START_BACKGROUND"
         const val ACTION_STOP = "STOP_SERVICE"
+        private var running = false
+        fun isServiceRunning() = running  // used in tileservice etc.
+
+        // channel stuff
         const val DEFAULT_CHANNEL = "SPOTLOG_DEFAULT_CHANNEL"
         const val NOTIFICATION_ID = 3245
 
