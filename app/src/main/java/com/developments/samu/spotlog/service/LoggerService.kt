@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.developments.samu.spotlog.R
@@ -116,6 +117,7 @@ class LoggerService : Service() {
 
     private fun log(song: Song) {
         // check early to prevent db scan
+        Log.d(LOG_TAG, "lastsong: $lastSong")
         if (song.trackId == lastSong.trackId && song.timeSent == lastSong.timeSent) return
         val logSize = prefs.getIntOrDefault(PrefsFragment.PREF_LOG_SIZE_KEY)
         repository.logSong(logSize, song, ::notifySongLogged)

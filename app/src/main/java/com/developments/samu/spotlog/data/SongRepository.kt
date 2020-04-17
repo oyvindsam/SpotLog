@@ -24,18 +24,25 @@ class SongRepository @Inject constructor(val songDao: SongDao) {
             callback(lastLogged)
         }
     }
-
+    // TODO: should probably put this in a preference. reuse timepicker dialog?
+    val MAGIC_NUMBER_PLAYTIME = 1000
     // log song if it is not recently logged or is last logged song
     fun logSong(logSize: Int, song: Song, callback: ((Song) -> Unit)) {
         Log.d(LOG_TAG, "$song")
         runOnIoThread {
             val lastSong = songDao.getLastLoggedSong()
-            if (song.trackId != lastSong?.trackId ||
-                    (song.trackId == lastSong.trackId && song.timeSent != lastSong.timeSent)) {
+            if (song.trackId != lastSong?.trackId) {
                 Log.d(LOG_TAG, "song will be saved to db")
                 songDao.deleteOld(logSize - 1)
                 songDao.insertSong(song)
                 callback(song)
+            }
+            // check if new playback position is bigger than
+            else if (song.timeSent != lastSong.timeSent &&
+                    song.playbackPosition - lastSong.playbackPosition > MAGIC_NUMBER_PLAYTIME) {
+                removeSong(lastSong)
+                saveSong(song)
+
             }
         }
     }
