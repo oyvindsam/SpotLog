@@ -25,11 +25,10 @@ class SongRepository @Inject constructor(val songDao: SongDao) {
     }
 
     // log song if it is not recently logged or is last logged song
-    fun logSong(fromTime: Long, logSize: Int, song: Song, callback: ((Song) -> Unit)) {
+    fun logSong(logSize: Int, song: Song, callback: ((Song) -> Unit)) {
         runOnIoThread {
-            val recentSongs = songDao.getLatestNoLiveData(fromTime)
             val lastSong = songDao.getLastLoggedSong()
-            if (!(recentSongs.any { s -> s.trackId == song.trackId }) && lastSong?.trackId != song.trackId) {
+            if (song.trackId != lastSong?.trackId || song.registeredTime != lastSong.registeredTime) {
                 songDao.deleteOld(logSize - 1)
                 songDao.insertSong(song)
                 callback(song)

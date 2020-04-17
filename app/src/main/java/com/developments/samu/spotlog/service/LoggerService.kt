@@ -64,6 +64,7 @@ class LoggerService : Service() {
         NotificationCompat.Builder(this, LoggerService.DEFAULT_CHANNEL)
                 .setSmallIcon(R.drawable.ic_tile_log_track)
                 .setContentTitle(getString(R.string.notif_content_title))
+                .setContentText("No song detected yet")
                 .setContentIntent(notifPendingIntent)
                 .addAction(notifActionStop)
     }
@@ -109,15 +110,17 @@ class LoggerService : Service() {
         lastSong = song  // keep track of the last logged song
 
         val logSize = prefs.getIntOrDefault(PrefsFragment.PREF_LOG_SIZE_KEY)
-        val fromTime = System.currentTimeMillis() - prefs.getIntOrDefault(PrefsFragment.PREF_TIMEOUT_KEY).minutesToMillis()
-        repository.logSong(fromTime, logSize, song, ::notifySongLogged)
+        repository.logSong(logSize, song, ::notifySongLogged)
     }
 
     private fun notifySongLogged(song: Song?) {
         if (!notificationIsActive || song == null) return  // check if notification is currently active
-        notificationBuilder.setContentTitle("${song.track} - ${song.artist}")
-        notificationBuilder.setContentText("${song.playbackPosition}")
-        NotificationManagerCompat.from(this).notify(LoggerService.NOTIFICATION_ID, notificationBuilder.build())
+        notificationBuilder.apply {
+            setContentTitle("${song.track} - ${song.artist}")
+            setContentText("${song.playbackPosition}")
+        }.also {
+            NotificationManagerCompat.from(this).notify(LoggerService.NOTIFICATION_ID, it.build())
+        }
     }
 
     override fun onDestroy() {

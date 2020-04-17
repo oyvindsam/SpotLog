@@ -13,9 +13,6 @@ interface SongDao {
     @Query("SELECT * FROM song WHERE registered_time > :fromTime ORDER BY registered_time DESC")
     fun getLatest(fromTime: Long): LiveData<List<Song>>
 
-    @Query("SELECT * FROM song WHERE registered_time > :fromTime ORDER BY registered_time DESC")
-    fun getLatestNoLiveData(fromTime: Long): List<Song>
-
     @Query("SELECT * FROM song ORDER BY registered_time DESC LIMIT 1")
     fun getLastLoggedSong(): Song?
 

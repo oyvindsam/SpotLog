@@ -31,18 +31,6 @@ class PrefsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPref
         else context?.stopService(loggerServiceIntentForeground)
     }
 
-    override fun onDisplayPreferenceDialog(preference: Preference) {
-        when (preference) {
-            is TimeoutPreference -> {
-                TimeoutPickerDialogFrag.newInstance(preference).also {
-                    it.setTargetFragment(this, 0)
-                    it.show(parentFragmentManager, "android.support.v7.preference.PreferenceFragment.DIALOG")
-                }
-            }
-            else -> super.onDisplayPreferenceDialog(preference)
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         SpotLogApplication.getAppComponent().injectPrefsFragment(this)
@@ -69,8 +57,6 @@ class PrefsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPref
     companion object {
         const val PREF_LOG_SIZE_KEY = "log_size_key"
         const val PREF_LOG_SIZE_DEFAULT = "-1" // values are saved as a string-array of ints. must be converted later
-        const val PREF_TIMEOUT_KEY = "timeout_key"
-        const val PREF_TIMEOUT_DEFAULT = 10
         const val PREF_FIRST_LAUNCH = "first_launch_key"
     }
 }

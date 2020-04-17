@@ -16,7 +16,6 @@ import org.threeten.bp.format.FormatStyle
 
 fun SharedPreferences.getIntOrDefault(key: String): Int =
         when (key) {
-            PrefsFragment.PREF_TIMEOUT_KEY -> this.getInt(key, PrefsFragment.PREF_TIMEOUT_DEFAULT)
             PrefsFragment.PREF_LOG_SIZE_KEY -> this.getString(key, PrefsFragment.PREF_LOG_SIZE_DEFAULT)?.toInt() ?: PrefsFragment.PREF_LOG_SIZE_DEFAULT.toInt()
             else -> throw IllegalArgumentException("Unknown key, $key")
         }
