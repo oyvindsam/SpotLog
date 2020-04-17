@@ -47,7 +47,7 @@ class LogAdapter(private val swipeCallback: ((Song) -> Unit))
         var lastDate: LocalDate? = null
         val songList = mutableListOf<ListItem>()
         list.forEach { song ->
-            val date = song.registeredTime.toLocalDateTime().toLocalDate()  // group only on day-date
+            val date = song.timeSent.toLocalDateTime().toLocalDate()  // group only on day-date
             if (date == lastDate) songList.add(SongItem(song))
             else {
                 lastDate = date
@@ -88,9 +88,8 @@ class LogAdapter(private val swipeCallback: ((Song) -> Unit))
                 val song = item.song
                 (holder as SongViewHolder).apply {
                     bind(View.OnClickListener {
-                        Log.d("log", "yep. logged1111111111111111111111111111111111111111")
                         Toast.makeText(it.context,
-                                "${song.track} was logged ${song.registeredTime.toLocalDateTime().toReadableString()}",
+                                "${song.track} was logged ${song.timeSent.toLocalDateTime().toReadableString()}",
                                 Toast.LENGTH_SHORT).show() },
                             View.OnClickListener { it.context.startActivity(song.playIntent()) },
                             song)

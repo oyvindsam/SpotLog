@@ -17,7 +17,6 @@ import com.developments.samu.spotlog.log.LogFragment
 import com.developments.samu.spotlog.preference.PrefsFragment
 import com.developments.samu.spotlog.utilities.Spotify
 import com.developments.samu.spotlog.utilities.getIntOrDefault
-import com.developments.samu.spotlog.utilities.minutesToMillis
 import javax.inject.Inject
 
 
@@ -76,7 +75,15 @@ class LoggerService : Service() {
     lateinit var prefs: SharedPreferences
 
     private var notificationIsActive = false
-    private var lastSong: Song? = null
+    private var lastSong = Song(
+            "",
+            "",
+            "",
+            "",
+            0,
+            0,
+            ""
+    )
 
     init {
         SpotLogApplication.getAppComponent().injectLoggerService(this)
@@ -107,10 +114,11 @@ class LoggerService : Service() {
     }
 
     private fun log(song: Song) {
-        lastSong = song  // keep track of the last logged song
-
+        // check early to prevent db scan
+        if (song.trackId == lastSong.trackId && song.timeSent == lastSong.timeSent) return
         val logSize = prefs.getIntOrDefault(PrefsFragment.PREF_LOG_SIZE_KEY)
         repository.logSong(logSize, song, ::notifySongLogged)
+        lastSong = song  // keep track of the last logged song
     }
 
     private fun notifySongLogged(song: Song?) {

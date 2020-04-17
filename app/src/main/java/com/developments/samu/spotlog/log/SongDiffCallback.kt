@@ -8,7 +8,7 @@ class SongDiffCallback : DiffUtil.ItemCallback<ListItem>() {
     override fun areItemsTheSame(oldItem: ListItem, newItem: ListItem): Boolean =
             when {
                 oldItem is SongItem && newItem is SongItem -> {
-                    Pair(oldItem.song.trackId, oldItem.song.registeredTime) == Pair(newItem.song.trackId, newItem.song.registeredTime)
+                    Pair(oldItem.song.trackId, oldItem.song.timeSent) == Pair(newItem.song.trackId, newItem.song.timeSent)
                 }
                 oldItem is HeaderItem && newItem is HeaderItem -> oldItem.date == newItem.date
                 else -> false

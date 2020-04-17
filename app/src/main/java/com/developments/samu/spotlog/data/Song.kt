@@ -10,7 +10,7 @@ data class Song(
         @ColumnInfo(name = "album") val album: String,
         @ColumnInfo(name = "track") val track: String,
         @ColumnInfo(name = "track_length") val trackLengthInSec: Int,
-        @ColumnInfo(name = "registered_time") val registeredTime: Long,
+        @ColumnInfo(name = "registered_time") val timeSent: Long,
         @ColumnInfo(name = "playback_position") val playbackPosition: String)
 
 fun Song.toPrettyString() =

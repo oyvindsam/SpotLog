@@ -24,42 +24,37 @@ class Spotify {
                 object : BroadcastReceiver() {
                     override fun onReceive(context: Context?, intent: Intent?) {
                         if (intent?.action == PLAYBACK_STATE_CHANGED) {
-                            try {  // Do not trust Spotify. Ever.
-                                val id = intent.getStringExtra("id")
-                                val artist = intent.getStringExtra("artist")
-                                val album = intent.getStringExtra("album")
-                                val track = intent.getStringExtra("track")
-                                val playbackPosition = intent.getIntExtra("playbackPosition", 0)
-                                val length = intent.getIntExtra("length", 0)
-                                val timeLeft = toMinLeft(length, playbackPosition)
-
-                                if (id == null || artist == null || album == null || track == null) return
-
-                                val song = Song(
-                                        id,
-                                        artist,
-                                        album,
-                                        track,
-                                        length,
-                                        System.currentTimeMillis(),
-                                        timeLeft
-                                )
-                                Log.d("Spotify", "song logged: $song")
-                                if (song.trackId.isEmpty()) return
-                                callback(song)
-                            } catch (e: IllegalStateException) {
-                                e.printStackTrace()
-                                Log.d("Spotify", "Intent has null field: ${intent.extras}")
+                                with (intent) {
+                                    val id = getStringExtra("id")
+                                    val artist = getStringExtra("artist")
+                                    val album = getStringExtra("album")
+                                    val track = getStringExtra("track")
+                                    val playbackPosition = getIntExtra("playbackPosition", 0)
+                                    val length = getIntExtra("length", 0)
+                                    val timeSent = getLongExtra("timeSent", -1L)
+                                    val timeLeft = toMinLeft(length, playbackPosition)
+                                    if (id == null || artist == null || album == null || track == null) return
+                                    val song = Song(
+                                            id,
+                                            artist,
+                                            album,
+                                            track,
+                                            length,
+                                            timeSent,
+                                            timeLeft
+                                    )
+                                    Log.d("Spotify", "song logged: $song")
+                                    callback(song)
+                                }
                             }
                         }
                     }
                 }
     }
-}
 
-fun Song.playIntent(): Intent =
-        Intent(Intent.ACTION_VIEW).apply {
-            `package` = Spotify.PACKAGE_NAME
-            data = Uri.parse(Spotify.URI_WEB_TRACK + trackId.substring(14))
-        }
+    fun Song.playIntent(): Intent =
+            Intent(Intent.ACTION_VIEW).apply {
+                `package` = Spotify.PACKAGE_NAME
+                data = Uri.parse(Spotify.URI_WEB_TRACK + trackId.substring(14))
+            }
 
