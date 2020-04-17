@@ -1,5 +1,6 @@
 package com.developments.samu.spotlog.data
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.developments.samu.spotlog.utilities.runOnIoThread
 import javax.inject.Inject
@@ -26,9 +27,12 @@ class SongRepository @Inject constructor(val songDao: SongDao) {
 
     // log song if it is not recently logged or is last logged song
     fun logSong(logSize: Int, song: Song, callback: ((Song) -> Unit)) {
+        Log.d(LOG_TAG, "$song")
         runOnIoThread {
             val lastSong = songDao.getLastLoggedSong()
-            if (song.trackId != lastSong?.trackId || song.timeSent != lastSong.timeSent) {
+            if (song.trackId != lastSong?.trackId ||
+                    (song.trackId == lastSong.trackId && song.timeSent != lastSong.timeSent)) {
+                Log.d(LOG_TAG, "song will be saved to db")
                 songDao.deleteOld(logSize - 1)
                 songDao.insertSong(song)
                 callback(song)

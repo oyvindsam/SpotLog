@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "0ec01c97212afa5da43cb42755d1e539",
+    "identityHash": "690b0756b921bc3dbd7f9207c60e2b04",
     "entities": [
       {
         "tableName": "Song",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`track_id` TEXT NOT NULL, `artist` TEXT NOT NULL, `album` TEXT NOT NULL, `track` TEXT NOT NULL, `track_length` INTEGER NOT NULL, `registered_time` INTEGER NOT NULL, `playback_position` TEXT NOT NULL, PRIMARY KEY(`track_id`, `registered_time`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`track_id` TEXT NOT NULL, `artist` TEXT NOT NULL, `album` TEXT NOT NULL, `track` TEXT NOT NULL, `track_length` INTEGER NOT NULL, `registered_time` INTEGER NOT NULL, `playback_position` INTEGER NOT NULL, PRIMARY KEY(`track_id`, `registered_time`))",
         "fields": [
           {
             "fieldPath": "trackId",
@@ -39,7 +39,7 @@
             "notNull": true
           },
           {
-            "fieldPath": "registeredTime",
+            "fieldPath": "timeSent",
             "columnName": "registered_time",
             "affinity": "INTEGER",
             "notNull": true
@@ -47,7 +47,7 @@
           {
             "fieldPath": "playbackPosition",
             "columnName": "playback_position",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -65,7 +65,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0ec01c97212afa5da43cb42755d1e539')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '690b0756b921bc3dbd7f9207c60e2b04')"
     ]
   }
 }

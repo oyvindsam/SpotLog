@@ -32,7 +32,6 @@ class Spotify {
                                     val playbackPosition = getIntExtra("playbackPosition", 0)
                                     val length = getIntExtra("length", 0)
                                     val timeSent = getLongExtra("timeSent", -1L)
-                                    val timeLeft = toMinLeft(length, playbackPosition)
                                     if (id == null || artist == null || album == null || track == null) return
                                     val song = Song(
                                             id,
@@ -41,7 +40,7 @@ class Spotify {
                                             track,
                                             length,
                                             timeSent,
-                                            timeLeft
+                                            playbackPosition
                                     )
                                     Log.d("Spotify", "song logged: $song")
                                     callback(song)

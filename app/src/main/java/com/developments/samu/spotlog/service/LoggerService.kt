@@ -12,6 +12,7 @@ import com.developments.samu.spotlog.R
 import com.developments.samu.spotlog.SpotLogApplication
 import com.developments.samu.spotlog.data.Song
 import com.developments.samu.spotlog.data.SongRepository
+import com.developments.samu.spotlog.data.toPositionPrettyString
 import com.developments.samu.spotlog.log.LogActivity
 import com.developments.samu.spotlog.log.LogFragment
 import com.developments.samu.spotlog.preference.PrefsFragment
@@ -82,7 +83,7 @@ class LoggerService : Service() {
             "",
             0,
             0,
-            ""
+            0
     )
 
     init {
@@ -125,7 +126,7 @@ class LoggerService : Service() {
         if (!notificationIsActive || song == null) return  // check if notification is currently active
         notificationBuilder.apply {
             setContentTitle("${song.track} - ${song.artist}")
-            setContentText("${song.playbackPosition}")
+            setContentText(song.toPositionPrettyString())
         }.also {
             NotificationManagerCompat.from(this).notify(LoggerService.NOTIFICATION_ID, it.build())
         }
