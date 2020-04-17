@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.developments.samu.spotlog.R
 import com.developments.samu.spotlog.databinding.LogActivityBinding
@@ -19,7 +20,9 @@ class LogActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
-        val navController = Navigation.findNavController(this, R.id.nav_host_fragment)
+        val navHostFragment = supportFragmentManager
+                .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
 
         // Adds up button when there is a destination in the back stack.
         NavigationUI.setupActionBarWithNavController(this, navController)
