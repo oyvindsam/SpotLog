@@ -13,7 +13,7 @@ import com.developments.samu.spotlog.R
 import com.developments.samu.spotlog.SpotLogApplication
 import com.developments.samu.spotlog.data.Song
 import com.developments.samu.spotlog.data.SongRepository
-import com.developments.samu.spotlog.data.sameButNewPosition
+import com.developments.samu.spotlog.data.sameNotNewPosition
 import com.developments.samu.spotlog.data.toPositionPrettyString
 import com.developments.samu.spotlog.log.LogActivity
 import com.developments.samu.spotlog.preference.PrefsFragment
@@ -116,11 +116,13 @@ class LoggerService : Service() {
         // first init after service created
         if (lastSong.trackId == "") lastSong = song
 
-        if (song.trackId != lastSong.trackId || song.sameButNewPosition(lastSong)) {
-            val logSize = prefs.getIntOrDefault(PrefsFragment.PREF_LOG_SIZE_KEY)
-            repository.logSong(logSize, song, ::notifySongLogged)
-            lastSong = song
-        }
+        if (song.sameNotNewPosition(lastSong)) return
+
+        Log.d(LOG_TAG, "$song")
+        val logSize = prefs.getIntOrDefault(PrefsFragment.PREF_LOG_SIZE_KEY)
+        repository.logSong(logSize, song)
+        notifySongLogged(song)
+        lastSong = song
     }
 
     private fun notifySongLogged(song: Song) {
