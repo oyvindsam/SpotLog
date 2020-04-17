@@ -1,14 +1,17 @@
 package com.developments.samu.spotlog.service
 
+import android.os.Build
 import android.service.quicksettings.TileService
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.developments.samu.spotlog.SpotLogApplication
 import com.developments.samu.spotlog.data.Song
 import com.developments.samu.spotlog.data.SongRepository
 import com.developments.samu.spotlog.utilities.Spotify
 import javax.inject.Inject
 
+@RequiresApi(Build.VERSION_CODES.N)
 class SpotLogTileService : TileService() {
 
     private val LOG_TAG: String = SpotLogTileService::class.java.simpleName
@@ -30,7 +33,6 @@ class SpotLogTileService : TileService() {
         try {
             this.unregisterReceiver(spotifyReceiver)
         } catch (e: Exception) {}
-
         super.onStopListening()
     }
 

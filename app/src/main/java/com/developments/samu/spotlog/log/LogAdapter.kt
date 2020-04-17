@@ -1,7 +1,6 @@
 package com.developments.samu.spotlog.log
 
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +9,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.developments.samu.spotlog.data.Song
+import com.developments.samu.spotlog.data.toPositionPrettyString
 import com.developments.samu.spotlog.databinding.LogHeaderBinding
 import com.developments.samu.spotlog.databinding.LogItemBinding
 import com.developments.samu.spotlog.utilities.playIntent
@@ -91,7 +91,11 @@ class LogAdapter(private val swipeCallback: ((Song) -> Unit))
                         Toast.makeText(it.context,
                                 "${song.track} was logged ${song.timeSent.toLocalDateTime().toReadableString()}",
                                 Toast.LENGTH_SHORT).show() },
-                            View.OnClickListener { it.context.startActivity(song.playIntent()) },
+                            View.OnClickListener {
+                                it.context.startActivity(song.playIntent())
+                                Toast.makeText(it.context,
+                                        "${song.track}: ${song.toPositionPrettyString()}",
+                                        Toast.LENGTH_LONG).show()},
                             song)
                     itemView.tag = song
                 }

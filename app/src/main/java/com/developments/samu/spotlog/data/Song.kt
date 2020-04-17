@@ -27,9 +27,9 @@ fun List<Song>.toPrettyString() =
 val MAGIC_NUMBER_PLAYTIME = 1000
 
 // Helper method to see if this song is "newer" -> playtime has changed (significantly, set by MAGIC_NUMBER_PLAYTIME)
-fun Song.sameButNewPosition(other: Song): Boolean {
+fun Song.sameNotNewPosition(other: Song): Boolean {
     return this.trackId == other.trackId &&
-            this.playbackPosition - other.playbackPosition > MAGIC_NUMBER_PLAYTIME
+            this.playbackPosition - other.playbackPosition < MAGIC_NUMBER_PLAYTIME
 }
 
 
