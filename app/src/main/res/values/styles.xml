@@ -1,27 +1,18 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-
-        <item name="actionBarTheme">@style/ThemeOverlay.MaterialComponents.Dark</item>
-    </style>
-
     <style name="SongTitle">
         <item name="android:textSize">16sp</item>
         <item name="android:ellipsize">end</item>
         <item name="android:textAppearance">?attr/textAppearanceListItem</item>
     </style>
 
+
     <style name="SongExtra">
         <item name="android:textSize">14sp</item>
         <item name="android:ellipsize">end</item>
-        <item name="android:textAppearance">?attr/textAppearanceListItem</item>
+        <item name="android:textAppearance">?attr/textAppearanceListItemSecondary</item>
+        <item name="android:textColor">?attr/colorListItemSecondary</item>
     </style>
-
 
 
 </resources>
