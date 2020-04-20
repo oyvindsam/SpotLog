@@ -1,6 +1,5 @@
 package com.developments.samu.spotlog.log
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -23,6 +22,7 @@ import com.developments.samu.spotlog.service.LoggerService
 import com.developments.samu.spotlog.utilities.Spotify
 import com.developments.samu.spotlog.utilities.applyPref
 import com.developments.samu.spotlog.utilities.isPackageInstalled
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import org.threeten.bp.LocalDate
@@ -90,23 +90,26 @@ class LogFragment : Fragment() {
     private fun showEnableBroadcastDialog() {
         if (isPackageInstalled(Spotify.PACKAGE_NAME, context?.packageManager)) {
             prefs.applyPref(Pair(PREF_FIRST_LAUNCH, false))
-            AlertDialog.Builder(context)
-                    .setTitle(getString(R.string.dialog_broadcast_title))
-                    .setMessage(getString(R.string.dialog_broadcast_message))
-                    .setPositiveButton(getString(R.string.dialog_broadcast_positive)) { _, _ ->
-                        // Intent.ACTION_APPLICATION_PREFERENCES added in api 24. On API < 24 it will just open Spotify.
-                        val intent = Intent("android.intent.action.APPLICATION_PREFERENCES")
-                        intent.`package` = Spotify.PACKAGE_NAME
-                        startActivity(intent) }
-                    .setNegativeButton(getString(R.string.dialog_broadcast_negative)) { dialog, _ ->
-                        dialog.dismiss() }
-                    .show()
+            context?.let {
+                MaterialAlertDialogBuilder(it)
+                        .setTitle(getString(R.string.dialog_broadcast_title))
+                        .setMessage(getString(R.string.dialog_broadcast_message))
+                        .setPositiveButton(getString(R.string.dialog_broadcast_positive)) { _, _ ->
+                            // Intent.ACTION_APPLICATION_PREFERENCES added in api 24. On API < 24 it will just open Spotify.
+                            val intent = Intent("android.intent.action.APPLICATION_PREFERENCES")
+                            intent.`package` = Spotify.PACKAGE_NAME
+                            startActivity(intent) }
+                        .setNegativeButton(getString(R.string.dialog_broadcast_negative)) { dialog, _ ->
+                            dialog.dismiss() }
+                        .show()
+            }
         }
         else showSpotifyNotInstalledDialog()
     }
 
     private fun showSpotifyNotInstalledDialog() {
-        AlertDialog.Builder(context)
+        context?.let {
+            MaterialAlertDialogBuilder(it)
                 .setTitle(getString(R.string.dialog_package_title))
                 .setMessage(getString(R.string.dialog_package_message))
                 .setNegativeButton(getString(R.string.dialog_package_negative)) { dialog, _ ->
@@ -114,6 +117,7 @@ class LogFragment : Fragment() {
                     activity?.finish()
                 }
                 .show()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

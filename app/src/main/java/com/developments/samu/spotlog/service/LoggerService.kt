@@ -115,10 +115,8 @@ class LoggerService : Service() {
     private fun log(song: Song) {
         // first init after service created
         if (lastSong.trackId == "") lastSong = song
+        else if (song.sameNotNewPosition(lastSong)) return
 
-        if (song.sameNotNewPosition(lastSong)) return
-
-        Log.d(LOG_TAG, "$song")
         val logSize = prefs.getIntOrDefault(PrefsFragment.PREF_LOG_SIZE_KEY)
         repository.logSong(logSize, song)
         notifySongLogged(song)

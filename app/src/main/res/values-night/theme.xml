@@ -13,11 +13,16 @@
         <item name="snackbarTextViewStyle">@style/AppSnackText</item>
         <item name="snackbarButtonStyle">@style/AppSnackButton</item>
 
+        <item name="materialAlertDialogTheme">@style/AppDialog</item>
+        <item name="alertDialogTheme">@style/AppDialog</item>
+
         <item name="colorListItemSecondary">#DDDDDD</item>
 
     </style>
 
-    <style name="AppActionBar" parent="@style/ThemeOverlay.MaterialComponents.Dark">
+
+
+    <style name="AppActionBar" parent="ThemeOverlay.MaterialComponents.Dark">
     </style>
 
     <style name="AppSnackBarStyle" parent="Widget.MaterialComponents.Snackbar">
